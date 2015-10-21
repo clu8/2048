@@ -1,4 +1,4 @@
-# use pytest
+﻿# use pytest
 from Game import *
 
 class TestGame:
@@ -29,3 +29,14 @@ class TestGame:
             assert len(g.get_open_squares()) == 15 - i
         assert g.add_square() == False
         assert len(g.get_open_squares()) == 0
+
+    def test_collapse(self):
+        g = Game()
+        assert g.collapse((2, 2, 4, 1)) == [None, 4, 4, 1]
+        assert g.collapse((None, 4, 4, 4)) == [None, None, 4, 8]
+        assert g.collapse((4, 8, 32, 4)) == [4, 8, 32, 4]
+        assert g.collapse((2, None, None, None)) == [None, None, None, 2]
+        assert g.collapse((None, None, None, 2)) == [None, None, None, 2]
+        assert g.collapse((2, 2, 4, 4)) == [None, None, 4, 8]
+        assert g.collapse((2, 2, 4, 8)) == [None, 4, 4, 8]
+        assert g.collapse((8, 8, None, None)) == [None, None, None, 16]
