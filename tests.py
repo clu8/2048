@@ -7,6 +7,9 @@ class TestGame:
                [None, None, 2, None], 
                [None, None, None, None]]
 
+    board_2 = [[2, 2, 2],
+               [4, 2, None]]
+
     def test_board_creation(self):
         g = Game()
         assert len(g.get_open_squares()) == 4 * 4
@@ -67,4 +70,20 @@ class TestGame:
                            [None, None, None, None]]
 
     def test_move_down(self):
+        pass
+
+    def test_move_left_2(self):
+        pass
+
+    def test_move_up_2(self):
+        pass
+
+    def test_move_right_2(self):
+        g = Game()
+        g.board = self.board_2
+        g.make_move(Move.right)
+        assert g.board == [[None, 2, 4],
+                           [None, 4, 2]]
+
+    def test_move_down_2(self):
         pass
