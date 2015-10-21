@@ -1,1 +1,1 @@
-Building a 2048 Solver
+Applying Varied Artificial Intelligence Techniques to Play 2048
