@@ -2,6 +2,11 @@
 from Game import *
 
 class TestGame:
+    board_1 = [[2, None, 2, 2], 
+               [None, 4, None, None], 
+               [None, None, 2, None], 
+               [None, None, None, None]]
+
     def test_board_creation(self):
         g = Game()
         assert len(g.get_open_squares()) == 4 * 4
@@ -40,3 +45,26 @@ class TestGame:
         assert g.collapse((2, 2, 4, 4)) == [None, None, 4, 8]
         assert g.collapse((2, 2, 4, 8)) == [None, 4, 4, 8]
         assert g.collapse((8, 8, None, None)) == [None, None, None, 16]
+
+    def test_str(self):
+        g = Game()
+        g.board = self.board_1
+        assert g.__str__() == 'Score: 0\n2    .    2    2   \n.    4    .    .   \n.    .    2    .   \n.    .    .    .   '
+
+    def test_move_left(self):
+        pass
+
+    def test_move_up(self):
+        pass
+
+    def test_move_right(self):
+        g = Game()
+        g.board = self.board_1
+        g.make_move(Move.right)
+        assert g.board == [[None, None, 2, 4], 
+                           [None, None, None, 4], 
+                           [None, None, None, 2], 
+                           [None, None, None, None]]
+
+    def test_move_down(self):
+        pass

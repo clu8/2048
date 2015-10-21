@@ -1,6 +1,6 @@
 ﻿#!/usr/bin/env python3
 
-from typing import List, Tuple
+from typing import List, Tuple, Iterable
 import random
 from enum import Enum
 
@@ -25,10 +25,10 @@ class Game(object):
             return '{:4}'.format(s)
 
         return 'Score: {}\n'.format(self.score) + \
-            '\n'.join([' '.join([serialize(self.board[r][c]) for r in range(self.rows)]) 
-                       for c in range(self.cols)])
+            '\n'.join([' '.join([serialize(self.board[r][c]) for c in range(self.cols)]) 
+                       for r in range(self.rows)])
 
-    def get_open_squares(self) -> List:
+    def get_open_squares(self) -> List[Tuple[int, int]]:
         return [(row, col) for row in range(self.rows) for col in range(self.cols) if self.board[row][col] is None]
 
     def add_square(self) -> bool:
@@ -40,7 +40,7 @@ class Game(object):
             self.board[square[0]][square[1]] = random.choice(self.NEW_VALUES)
             return True
 
-    def collapse(self, values: Tuple) -> List:
+    def collapse(self, values: Iterable[int]) -> List[int]:
         '''
         Collapses from left to right:
         [2, 2, 4, 1] -> [None, 4, 4, 1]
@@ -60,11 +60,10 @@ class Game(object):
 
     def make_move(self, move: Move) -> None:
         if move == Move.left:
-            pass
+            raise NotImplementedError()
         elif move == Move.up:
-            pass
+            raise NotImplementedError()
         elif move == Move.right:
-            pass
+            self.board = [self.collapse(row) for row in self.board]
         elif move == Move.down:
-            pass
-        raise NotImplementedError()
+            raise NotImplementedError()
