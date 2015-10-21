@@ -55,3 +55,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# LaTeX stuff
+proposal.fdb_latexmk
+proposal.aux
+proposal.log
+proposal.synctex.gz
