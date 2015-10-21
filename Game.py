@@ -19,6 +19,15 @@ class Game(object):
         self.board = [[None] * self.cols for _ in range(self.rows)]
         self.score = 0
 
+    def __str__(self) -> str:
+        def serialize(value: int) -> str:
+            s = '.' if value is None else str(value)
+            return '{:4}'.format(s)
+
+        return 'Score: {}\n'.format(self.score) + \
+            '\n'.join([' '.join([serialize(self.board[r][c]) for r in range(self.rows)]) 
+                       for c in range(self.cols)])
+
     def get_open_squares(self) -> List:
         return [(row, col) for row in range(self.rows) for col in range(self.cols) if self.board[row][col] is None]
 
