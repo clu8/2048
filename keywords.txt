@@ -1,1 +1,11 @@
-INSERT KEYWORDS HERE
+reflex
+reinforcement learning
+expectimax
+game theory
+search
+Q-learning
+deep Q-learning
+Python
+2048
+Markov decision process
+Bayesian networks
