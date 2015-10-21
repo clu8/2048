@@ -48,6 +48,8 @@ class TestGame:
         assert g.collapse((2, 2, 4, 4)) == [None, None, 4, 8]
         assert g.collapse((2, 2, 4, 8)) == [None, 4, 4, 8]
         assert g.collapse((8, 8, None, None)) == [None, None, None, 16]
+        assert g.collapse((4, None, 4, None)) == [None, None, None, 8]
+        assert g.collapse((None, 4, None, 4)) == [None, None, None, 8]
 
     def test_str(self):
         g = Game()

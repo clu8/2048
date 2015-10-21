@@ -46,12 +46,10 @@ class Game(object):
         [2, 2, 4, 1] -> [None, 4, 4, 1]
         [None, 4, 4, 4] -> [None, None, 4, 8]
         '''
-        collapsed = list(values)
+        collapsed = list(filter(lambda x: x is not None, values))
         i = len(collapsed) - 1
         while i > 0:
-            if collapsed[i] is None:
-                collapsed.pop(i)
-            elif collapsed[i] == collapsed[i - 1]:
+            if collapsed[i] == collapsed[i - 1]:
                 collapsed[i] *= 2
                 collapsed.pop(i - 1)
                 i -= 1
