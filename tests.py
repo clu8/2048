@@ -5,7 +5,7 @@ class TestGame:
     board_1 = [[2, None, 2, 2], 
                [None, 4, None, None], 
                [None, None, 2, None], 
-               [None, None, None, None]]
+               [4, 8, None, 8]]
 
     board_2 = [[2, 2, 2],
                [4, 2, None]]
@@ -54,10 +54,16 @@ class TestGame:
     def test_str(self):
         g = Game()
         g.board = self.board_1
-        assert g.__str__() == 'Score: 0\n2    .    2    2   \n.    4    .    .   \n.    .    2    .   \n.    .    .    .   '
+        assert g.__str__() == 'Score: 0\n2    .    2    2   \n.    4    .    .   \n.    .    2    .   \n4    8    .    8   '
 
     def test_move_left(self):
-        pass
+        g = Game()
+        g.board = self.board_1
+        g.make_move(Move.left)
+        assert g.board == [[4, 2, None, None],
+                           [4, None, None, None],
+                           [2, None, None, None],
+                           [4, 16, None, None]]
 
     def test_move_up(self):
         pass
@@ -69,13 +75,17 @@ class TestGame:
         assert g.board == [[None, None, 2, 4], 
                            [None, None, None, 4], 
                            [None, None, None, 2], 
-                           [None, None, None, None]]
+                           [None, None, 4, 16]]
 
     def test_move_down(self):
         pass
 
     def test_move_left_2(self):
-        pass
+        g = Game()
+        g.board = self.board_2
+        g.make_move(Move.left)
+        assert g.board == [[4, 2, None],
+                           [4, 2, None]]
 
     def test_move_up_2(self):
         pass

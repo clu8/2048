@@ -58,7 +58,7 @@ class Game(object):
 
     def make_move(self, move: Move) -> None:
         if move == Move.left:
-            raise NotImplementedError()
+            self.board = [self.collapse(row[::-1])[::-1] for row in self.board]
         elif move == Move.up:
             raise NotImplementedError()
         elif move == Move.right:
