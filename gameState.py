@@ -147,10 +147,33 @@ class ExpectimaxAgent():
 			if depth == 0:
 				return self.evaluationFunction(gameState), random.random(), None
 
-			if index == 0: # pacman
+			if index == 0: # human
 				return max([(recurse(gameState.generateSuccessor(index, action), 1, depth)[0], random.random(), action) for action in gameState.getLegalActions(index)])
-			elif index == 1: # last ghost
+			elif index == 1: # computer
 				return sum([recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0] for action in gameState.getLegalActions(index)]) / len(gameState.getLegalActions(index)), random.random(), random.choice(gameState.getLegalActions(index))
+		utility, rand, action = recurse(gameState, index, self.depth)
+		return action
+
+class MinimaxAgent():
+	
+	def __init__(self):
+		self.depth = 3
+
+	def evaluationFunction(self, gameState):
+		return gameState.score
+
+	def getAction(self, gameState, index):
+		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
+		def recurse(gameState, index, depth):
+			if gameState.isWin() or gameState.isLose():
+				return gameState.getScore(), random.random(), None
+			if depth == 0:
+				return self.evaluationFunction(gameState), random.random(), None
+
+			if index == 0: # humam
+				return max([(recurse(gameState.generateSuccessor(index, action), 1, depth)[0], random.random(), action) for action in gameState.getLegalActions(index)])
+			elif index == 1: # computer
+				return min([(recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0], random.random(), action) for action in gameState.getLegalActions(index)])
 		utility, rand, action = recurse(gameState, index, self.depth)
 		return action
 
