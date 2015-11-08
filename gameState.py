@@ -13,19 +13,61 @@ class GameState2048:
 	BOARD_SIZE = 4
 	WINNING_TILE = 2048
 
-	def __init__(self):
-		self.board = [[0 for _ in range(self.BOARD_SIZE)] for _ in range(self.BOARD_SIZE)] # store the value at each tile, 0 means empty
-		self.score = 0
+	def __init__(self, prevState = None):
+		if prevState:
+			self.board = [[prevState.board[row][col] for col in range(self.BOARD_SIZE)] for row in range(self.BOARD_SIZE)] # store the value at each tile, 0 means empty
+			self.score = prevState.score
+		else:
+			self.board = [[0 for _ in range(self.BOARD_SIZE)] for _ in range(self.BOARD_SIZE)] # store the value at each tile, 0 means empty
+			self.score = 0
 		self.moves = Move()
 
-	def getLegalAction(self, agentIndex = 0):
+	def getLegalActions(self, agentIndex = 0):
 		assert agentIndex == 0 or agentIndex == 1
 		if self.isWin() or self.isLose():
 			return []
 		if agentIndex == 0:  # human player
-		  return self.moves.getAllMoves()
+			return self.moves.getAllMoves()
 		else:
-		  return [(row, col) for col in range(self.BOARD_SIZE) for row in range(self.BOARD_SIZE) if self.isTileEmpty(row, col)]
+			return [(row, col) for col in range(self.BOARD_SIZE) for row in range(self.BOARD_SIZE) if self.isTileEmpty(row, col)]
+
+	def collapse(self, values):
+		collapsed = list(filter(lambda x: x != 0, values))
+		i = len(collapsed) - 1
+		while i > 0:
+			if collapsed[i] == collapsed[i - 1]:
+				collapsed[i] *= 2
+				self.score += collapsed[i]
+				collapsed.pop(i - 1)
+				i -= 1
+			i -= 1
+		return [0] * (len(values) - len(collapsed)) + collapsed
+
+	def generateSuccessor(self, agentIndex, action):
+		# Check that successors exist
+		if self.isWin() or self.isLose():
+			raise Exception('Can\'t generate a successor of a terminal state.')
+
+		# Copy current state
+		state = GameState2048(self)
+
+		if agentIndex == 0: # human player
+			if action == self.moves.left:
+				state.board = [state.collapse(row[::-1])[::-1] for row in state.board]
+			elif action == self.moves.up:
+				transposed = zip(*state.board)
+				collapsed = [state.collapse(col[::-1])[::-1] for col in transposed]
+				state.board = list(map(lambda x: list(x), zip(*collapsed)))
+			elif action == self.moves.right:
+				state.board = [state.collapse(row) for row in state.board]
+			elif action == self.moves.down:
+				transposed = zip(*state.board)
+				collapsed = [state.collapse(col) for col in transposed]
+				state.board = list(map(lambda x: list(x), zip(*collapsed)))
+		else:
+			pass # handle computer move later
+
+		return state
 
 	def isWin(self):
 		for row in self.board:
@@ -48,13 +90,30 @@ class GameState2048:
 		assert value ^ (value - 1) # value should be power of 2
 		self.board[row][col] = value
 
+	@staticmethod
+	def printBoard(board):
+		text = ''
+		for row in board:
+			for tile in row:
+				text += str(tile) + ' '
+			text += '\n'
+		print text.strip('\n')
+
 game = GameState2048()
 
 assert game.board == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
-assert game.getLegalAction(0) == [game.moves.left, game.moves.up, game.moves.right, game.moves.down]
-assert len(game.getLegalAction(1)) == game.BOARD_SIZE ** 2
+assert game.getLegalActions(0) == [game.moves.left, game.moves.up, game.moves.right, game.moves.down]
+assert len(game.getLegalActions(1)) == game.BOARD_SIZE ** 2
 
 assert game.isLose() == False
 game.setValue(0, 0, game.WINNING_TILE)
 assert game.isWin() == True
+
+game.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
+game.printBoard(game.board)
+
+for move in game.getLegalActions(0):
+	newState = game.generateSuccessor(0, move)
+	print '\nScore', newState.score
+	game.printBoard(newState.board)
