@@ -46,12 +46,10 @@ class Game(object):
         [2, 2, 4, 1] -> [None, 4, 4, 1]
         [None, 4, 4, 4] -> [None, None, 4, 8]
         '''
-        collapsed = list(values)
+        collapsed = list(filter(lambda x: x is not None, values))
         i = len(collapsed) - 1
         while i > 0:
-            if collapsed[i] is None:
-                collapsed.pop(i)
-            elif collapsed[i] == collapsed[i - 1]:
+            if collapsed[i] == collapsed[i - 1]:
                 collapsed[i] *= 2
                 collapsed.pop(i - 1)
                 i -= 1
@@ -59,11 +57,15 @@ class Game(object):
         return [None] * (len(values) - len(collapsed)) + collapsed
 
     def make_move(self, move: Move) -> None:
-        if move == Move.left:
-            raise NotImplementedError()
-        elif move == Move.up:
-            raise NotImplementedError()
-        elif move == Move.right:
+        if move == Move.right:
             self.board = [self.collapse(row) for row in self.board]
+        elif move == Move.left:
+            self.board = [self.collapse(row[::-1])[::-1] for row in self.board]
         elif move == Move.down:
-            raise NotImplementedError()
+            transposed = zip(*self.board)
+            collapsed = [self.collapse(col) for col in transposed]
+            self.board = list(map(lambda x: list(x), zip(*collapsed)))
+        elif move == Move.up:
+            transposed = zip(*self.board)
+            collapsed = [self.collapse(col[::-1])[::-1] for col in transposed]
+            self.board = list(map(lambda x: list(x), zip(*collapsed)))
