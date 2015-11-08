@@ -177,12 +177,47 @@ class MinimaxAgent():
 		utility, rand, action = recurse(gameState, index, self.depth)
 		return action
 
+class AlphaBetaAgent():
+	
+	def __init__(self):
+		self.depth = 3
+
+	def evaluationFunction(self, gameState):
+		return gameState.score
+
+	def getAction(self, gameState, index):
+
+		def recurse(gameState, index, depth, alpha, beta):
+			if gameState.isWin() or gameState.isLose():
+				return gameState.getScore(), random.random(), None
+			if depth == 0:
+				return self.evaluationFunction(gameState), random.random(), None
+			if index == 0: # human
+				maximum = (float('-inf'), random.random(), None)
+				for action in gameState.getLegalActions(index):
+					maximum = max(maximum, (recurse(gameState.generateSuccessor(index, action), 1, depth, alpha, beta)[0], random.random(), action))
+					alpha = max(alpha, maximum[0]) # maximum[0] is the max utility
+					if beta <= alpha:
+						break
+				return maximum
+			elif index == 1: # computer
+				minimum = (float('inf'), random.random(), None)
+				for action in gameState.getLegalActions(index):
+					minimum = min(minimum, (recurse(gameState.generateSuccessor(index, action), 0, depth - 1, alpha, beta)[0], random.random(), action))
+					beta = min(beta, minimum[0]) # minimum[0] is the min utility
+					if beta <= alpha:
+						break
+				return minimum
+
+		utility, rand, action = recurse(gameState, index, self.depth, float('-inf'), float('inf'))
+		return action
+
 move = Move()
 gameState = GameState2048()
-gameState.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
-agent = ExpectimaxAgent()
+gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+agent = AlphaBetaAgent()
 
-for _ in range(10):
+for _ in range(100):
 	gameState.printBoard(gameState.board)
 	humanAction = agent.getAction(gameState, 0)
 	print 'human move: ' + move.moveString(humanAction)
