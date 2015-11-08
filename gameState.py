@@ -55,5 +55,6 @@ assert game.board == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 assert game.getLegalAction(0) == [game.moves.left, game.moves.up, game.moves.right, game.moves.down]
 assert len(game.getLegalAction(1)) == game.BOARD_SIZE ** 2
 
-assert game.isWin() == False
 assert game.isLose() == False
+game.setValue(0, 0, game.WINNING_TILE)
+assert game.isWin() == True
