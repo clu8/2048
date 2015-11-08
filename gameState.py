@@ -77,7 +77,8 @@ class GameState2048:
 				collapsed = [state.collapse(col) for col in transposed]
 				state.board = list(map(lambda x: list(x), zip(*collapsed)))
 		else:
-			pass
+			row, col = action
+			state.board[row][col] = 2 # should we allow 4?
 
 		return state
 
@@ -138,7 +139,7 @@ class ExpectimaxAgent():
 	def evaluationFunction(self, gameState):
 		return gameState.score
 
-	def getAction(self, gameState):
+	def getAction(self, gameState, index):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
 		def recurse(gameState, index, depth):
 			if gameState.isWin() or gameState.isLose():
@@ -150,14 +151,19 @@ class ExpectimaxAgent():
 				return max([(recurse(gameState.generateSuccessor(index, action), 1, depth)[0], random.random(), action) for action in gameState.getLegalActions(index)])
 			elif index == 1: # last ghost
 				return sum([recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0] for action in gameState.getLegalActions(index)]) / len(gameState.getLegalActions(index)), random.random(), random.choice(gameState.getLegalActions(index))
-		utility, rand, action = recurse(gameState, 0, self.depth)
+		utility, rand, action = recurse(gameState, index, self.depth)
 		return action
 
 move = Move()
 gameState = GameState2048()
 gameState.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
 agent = ExpectimaxAgent()
-print 'Board:'
-gameState.printBoard(gameState.board)
-print 'Move:'
-print move.moveString(agent.getAction(gameState))
+
+for _ in range(10):
+	gameState.printBoard(gameState.board)
+	humanAction = agent.getAction(gameState, 0)
+	print 'human move: ' + move.moveString(humanAction)
+	gameState = gameState.generateSuccessor(0, humanAction)
+	computerAction = agent.getAction(gameState, 1)
+	print 'computer move: ' + str(computerAction)
+	gameState = gameState.generateSuccessor(1, computerAction)
