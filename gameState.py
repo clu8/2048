@@ -1,8 +1,20 @@
+import random
+
 class Move:
 	left, up, right, down = range(4)
 
 	def getAllMoves(self):
 		return [self.left, self.up, self.right, self.down]
+
+	def moveString(self, move):
+		if move == self.left:
+			return 'left'
+		elif move == self.up:
+			return 'up'
+		elif move == self.right:
+			return 'right'
+		elif move == self.down:
+			return 'down'
 
 class GameState2048:
 	"""
@@ -26,7 +38,7 @@ class GameState2048:
 		assert agentIndex == 0 or agentIndex == 1
 		if self.isWin() or self.isLose():
 			return []
-		if agentIndex == 0:  # human player
+		if agentIndex == 0:	# human player
 			return self.moves.getAllMoves()
 		else:
 			return [(row, col) for col in range(self.BOARD_SIZE) for row in range(self.BOARD_SIZE) if self.isTileEmpty(row, col)]
@@ -65,7 +77,7 @@ class GameState2048:
 				collapsed = [state.collapse(col) for col in transposed]
 				state.board = list(map(lambda x: list(x), zip(*collapsed)))
 		else:
-			pass # handle computer move later
+			pass
 
 		return state
 
@@ -99,21 +111,53 @@ class GameState2048:
 			text += '\n'
 		print text.strip('\n')
 
-game = GameState2048()
+# game = GameState2048()
 
-assert game.board == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+# assert game.board == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
-assert game.getLegalActions(0) == [game.moves.left, game.moves.up, game.moves.right, game.moves.down]
-assert len(game.getLegalActions(1)) == game.BOARD_SIZE ** 2
+# assert game.getLegalActions(0) == [game.moves.left, game.moves.up, game.moves.right, game.moves.down]
+# assert len(game.getLegalActions(1)) == game.BOARD_SIZE ** 2
 
-assert game.isLose() == False
-game.setValue(0, 0, game.WINNING_TILE)
-assert game.isWin() == True
+# assert game.isLose() == False
+# game.setValue(0, 0, game.WINNING_TILE)
+# assert game.isWin() == True
 
-game.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
-game.printBoard(game.board)
+# game.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
+# game.printBoard(game.board)
 
-for move in game.getLegalActions(0):
-	newState = game.generateSuccessor(0, move)
-	print '\nScore', newState.score
-	game.printBoard(newState.board)
+# for move in game.getLegalActions(0):
+# 	newState = game.generateSuccessor(0, move)
+# 	print '\nScore', newState.score
+# 	game.printBoard(newState.board)
+
+class ExpectimaxAgent():
+	
+	def __init__(self):
+		self.depth = 3
+
+	def evaluationFunction(self, gameState):
+		return gameState.score
+
+	def getAction(self, gameState):
+		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
+		def recurse(gameState, index, depth):
+			if gameState.isWin() or gameState.isLose():
+				return gameState.getScore(), random.random(), None
+			if depth == 0:
+				return self.evaluationFunction(gameState), random.random(), None
+
+			if index == 0: # pacman
+				return max([(recurse(gameState.generateSuccessor(index, action), 1, depth)[0], random.random(), action) for action in gameState.getLegalActions(index)])
+			elif index == 1: # last ghost
+				return sum([recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0] for action in gameState.getLegalActions(index)]) / len(gameState.getLegalActions(index)), random.random(), random.choice(gameState.getLegalActions(index))
+		utility, rand, action = recurse(gameState, 0, self.depth)
+		return action
+
+move = Move()
+gameState = GameState2048()
+gameState.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
+agent = ExpectimaxAgent()
+print 'Board:'
+gameState.printBoard(gameState.board)
+print 'Move:'
+print move.moveString(agent.getAction(gameState))
