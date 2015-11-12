@@ -13,7 +13,7 @@ function GameManager(size, InputManager, Actuator, StorageManager, query_server)
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
 
   this.setup();
-  this.query_server.repeatedCall();
+  this.query_server.repeatedCall(); // place to start AI algorithm
 }
 
 // Restart the game
@@ -130,6 +130,7 @@ GameManager.prototype.moveTile = function (tile, cell) {
 };
 
 // Move tiles on the grid in the specified direction
+// TODO: pass back score and new grid layout from this function
 GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
@@ -191,6 +192,7 @@ GameManager.prototype.move = function (direction) {
 
     this.actuate();
   }
+  console.log(this.grid.serialize());
 };
 
 // Get the vector representing the chosen direction

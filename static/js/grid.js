@@ -112,6 +112,16 @@ Grid.prototype.serialize = function () {
 
   return {
     size: this.size,
+    // cellState: 2d array of serialzed tile object, or null if no object
+    // Each serialized tile:
+    // {
+    //  position: {
+    //    x: this.x,
+    //    y: this.y
+    //  },
+    //  value: this.value
+    // };
+
     cells: cellState
   };
 };
