@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1447396241 "progress.tex" "progress.pdf" "progress" 1447396242
+["pdflatex"] 1447397253 "progress.tex" "progress.pdf" "progress" 1447397254
   "/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii" 1337017135 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/etexcmds.sty" 1335995445 7612 c47308d923ec19888707b0f1792b326a ""
   "/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ifluatex.sty" 1303254447 7324 11d14f318d865f420e692d4e6c9c18c3 ""
@@ -38,9 +38,9 @@
   "/usr/local/texlive/2014/texmf-dist/tex/latex/setspace/setspace.sty" 1324344192 22913 a27d7908fc6f0385466454a966a316eb ""
   "/usr/local/texlive/2014/texmf-dist/tex/latex/tools/enumerate.sty" 1399675188 3255 42d834dc82171769c16badd22df87021 ""
   "2048_screenshot.jpg" 1447392175 52809 dfcf1895502e097fc18d71bd77c81b52 ""
-  "progress.aux" 1447396242 938 85e41bf7ccd299a38b1f5eb3b19fd1c3 ""
-  "progress.tex" 1447396241 10239 a02e0233849997ab11f982529b7b4eec ""
+  "progress.aux" 1447397254 938 85e41bf7ccd299a38b1f5eb3b19fd1c3 ""
+  "progress.tex" 1447397251 10258 e5617772092c86e72138c45b2dce9881 ""
   (generated)
-  "progress.log"
-  "progress.pdf"
   "progress.aux"
+  "progress.pdf"
+  "progress.log"
