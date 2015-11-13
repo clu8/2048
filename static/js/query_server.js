@@ -6,6 +6,8 @@
  * TODO: add end-game handling
  * TODO: add high score handling
  * TODO: handle human manual input
+ * TODO: arbitrary number limit of trials
+ * TODO: fix http get problem
  */
 function query_server(gameManager) {
 	this.gameManager = gameManager;
@@ -21,7 +23,11 @@ function query_server(gameManager) {
 			console.log(data);
 			// console.assert(data["move"], "Algorithm output format error. Data should contain field \"move\", an integer between >=0 and <=3.");
 			layout = gameManager.move(data["move"]);
-        	repeatedCall(layout);
+			if (!layout) {					// Game terminated
+				gameManager.restart();		// restart() will automatically rerun repeatedCall()
+			} else {
+				repeatedCall(layout);
+			}
     	})
 	}
 
@@ -46,7 +52,7 @@ function query_server(gameManager) {
 		data = {};
 		data.score = layout.score;
 		data.grid = [[], [], [], []];
-		console.log(layout);
+		// console.log(layout);
 		/* layout.grid.cells.forEach(function(tileRow) {
 			row = [];
 			tileRow.forEach(function(tile) {

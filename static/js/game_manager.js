@@ -20,6 +20,7 @@ GameManager.prototype.restart = function () {
   this.storageManager.clearGameState();
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
+  this.query_server.repeatedCall(this.serialize());
 };
 
 // Keep playing after winning (allows going over 2048)
