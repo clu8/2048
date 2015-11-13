@@ -3,17 +3,16 @@ function GameManager(size, InputManager, Actuator, StorageManager, query_server)
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
-  this.query_server   = new query_server(this.inputManager);
+  this.query_server   = new query_server(this);
 
   this.startTiles     = 2;
 
   this.inputManager.on("move", this.move.bind(this));
-  console.log("Size" + this.size);
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
 
   this.setup();
-  this.query_server.repeatedCall(); // place to start AI algorithm
+  this.query_server.repeatedCall(this.serialize()); // place to start AI algorithm
 }
 
 // Restart the game
@@ -192,7 +191,8 @@ GameManager.prototype.move = function (direction) {
 
     this.actuate();
   }
-  console.log(this.grid.serialize());
+  // console.log(this.serialize());
+  return this.serialize();
 };
 
 // Get the vector representing the chosen direction
