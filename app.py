@@ -5,6 +5,7 @@ from flask import request
 import time
 import random
 import json
+import gameState
 app = Flask(__name__)
 
 @app.route("/")
@@ -13,20 +14,11 @@ def display():
 
 @app.route("/move")
 def move():
-	# Plug in the algorithm below
-	data = {
-        'move'  : random.randint(0, 3),
-    }
-	js = json.dumps(data)
-	# Plug in the algorithm above
-
 	layout = json.loads(request.args.get('layout'))
-	print layout["score"]
-	print layout["grid"]
-	time.sleep(3)
-
-	resp = Response(js, status=200, mimetype='application/json')
+	data = {'move': gameState.run(layout["grid"], layout["score"]),}
+	time.sleep(0.1)
+	resp = Response(json.dumps(data), status=200, mimetype='application/json')
 	return resp
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
