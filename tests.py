@@ -56,7 +56,6 @@ class TestGame:
         g.board = self.board_1
         assert g.__str__() == 'Score: 0\n2    .    2    2   \n.    4    .    .   \n.    .    2    .   \n4    8    .    8   '
 
-
     @pytest.mark.parametrize('start,move,expected', [
         (board_1, Move.right, [[None, None, 2, 4], 
                                [None, None, None, 4], 

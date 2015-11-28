@@ -3,6 +3,7 @@
 from typing import List, Tuple, Iterable
 import random
 from enum import Enum
+import pillow
 
 class Move(Enum):
     left = 1
