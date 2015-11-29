@@ -106,3 +106,11 @@ class TestEval:
                                 [2, 32, 0, 0],
                                 [2, 16, 64, 128],
                                 [4, 16, 0, 0]]) == 1 / (662 + 1)
+
+    def test_eval_monotonicity(self):
+        assert eval_monotonicity([[0 for c in range(4)] for r in range(4)]) == 1
+        assert eval_monotonicity([[2 for c in range(4)] for r in range(4)]) == 1
+        assert eval_monotonicity([[4, 2, 4, 0],
+                                  [2, 32, 0, 0],
+                                  [2, 16, 64, 128],
+                                  [4, 16, 0, 0]]) == 1 / (9 + 1)
