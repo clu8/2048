@@ -135,7 +135,6 @@ class GameState2048:
 # 	game.printBoard(newState.board)
 
 class ExpectimaxAgent():
-	
 	def __init__(self):
 		self.depth = 3
 
@@ -158,7 +157,6 @@ class ExpectimaxAgent():
 		return action
 
 class MinimaxAgent():
-	
 	def __init__(self):
 		self.depth = 3
 
@@ -181,7 +179,6 @@ class MinimaxAgent():
 		return action
 
 class AlphaBetaAgent():
-	
 	def __init__(self):
 		self.depth = 3
 

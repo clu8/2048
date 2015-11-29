@@ -1,14 +1,15 @@
-﻿from Game import *
-import pytest
+﻿import pytest
+from Game import *
+from eval import *
 
 class TestGame:
-    board_1 = [[2, None, 2, 2], 
-               [None, 4, None, None], 
-               [None, None, 2, None], 
-               [4, 8, None, 8]]
+    board_1 = [[2, 0, 2, 2], 
+               [0, 4, 0, 0], 
+               [0, 0, 2, 0], 
+               [4, 8, 0, 8]]
 
     board_2 = [[2, 2, 2],
-               [4, 2, None]]
+               [4, 2, 0]]
 
     def test_board_creation(self):
         g = Game()
@@ -40,16 +41,16 @@ class TestGame:
 
     def test_collapse(self):
         g = Game()
-        assert g.collapse((2, 2, 4, 1)) == [None, 4, 4, 1]
-        assert g.collapse((None, 4, 4, 4)) == [None, None, 4, 8]
+        assert g.collapse((2, 2, 4, 1)) == [0, 4, 4, 1]
+        assert g.collapse((0, 4, 4, 4)) == [0, 0, 4, 8]
         assert g.collapse((4, 8, 32, 4)) == [4, 8, 32, 4]
-        assert g.collapse((2, None, None, None)) == [None, None, None, 2]
-        assert g.collapse((None, None, None, 2)) == [None, None, None, 2]
-        assert g.collapse((2, 2, 4, 4)) == [None, None, 4, 8]
-        assert g.collapse((2, 2, 4, 8)) == [None, 4, 4, 8]
-        assert g.collapse((8, 8, None, None)) == [None, None, None, 16]
-        assert g.collapse((4, None, 4, None)) == [None, None, None, 8]
-        assert g.collapse((None, 4, None, 4)) == [None, None, None, 8]
+        assert g.collapse((2, 0, 0, 0)) == [0, 0, 0, 2]
+        assert g.collapse((0, 0, 0, 2)) == [0, 0, 0, 2]
+        assert g.collapse((2, 2, 4, 4)) == [0, 0, 4, 8]
+        assert g.collapse((2, 2, 4, 8)) == [0, 4, 4, 8]
+        assert g.collapse((8, 8, 0, 0)) == [0, 0, 0, 16]
+        assert g.collapse((4, 0, 4, 0)) == [0, 0, 0, 8]
+        assert g.collapse((0, 4, 0, 4)) == [0, 0, 0, 8]
 
     def test_str(self):
         g = Game()
@@ -57,30 +58,30 @@ class TestGame:
         assert g.__str__() == 'Score: 0\n2    .    2    2   \n.    4    .    .   \n.    .    2    .   \n4    8    .    8   '
 
     @pytest.mark.parametrize('start,move,expected', [
-        (board_1, Move.right, [[None, None, 2, 4], 
-                               [None, None, None, 4], 
-                               [None, None, None, 2], 
-                               [None, None, 4, 16]]),
-        (board_1, Move.left, [[4, 2, None, None],
-                               [4, None, None, None],
-                               [2, None, None, None],
-                               [4, 16, None, None]]),
-        (board_1, Move.down, [[None, None, None, None],
-                               [None, None, None, None],
-                               [2, 4, None, 2],
+        (board_1, Move.right, [[0, 0, 2, 4], 
+                               [0, 0, 0, 4], 
+                               [0, 0, 0, 2], 
+                               [0, 0, 4, 16]]),
+        (board_1, Move.left, [[4, 2, 0, 0],
+                               [4, 0, 0, 0],
+                               [2, 0, 0, 0],
+                               [4, 16, 0, 0]]),
+        (board_1, Move.down, [[0, 0, 0, 0],
+                               [0, 0, 0, 0],
+                               [2, 4, 0, 2],
                                [4, 8, 4, 8]]),
         (board_1, Move.up, [[2, 4, 4, 2],
-                               [4, 8, None, 8],
-                               [None, None, None, None],
-                               [None, None, None, None]]),
-        (board_2, Move.right, [[None, 2, 4],
-                               [None, 4, 2]]),
-        (board_2, Move.left, [[4, 2, None],
-                              [4, 2, None]]),
-        (board_2, Move.down, [[2, None, None],
+                               [4, 8, 0, 8],
+                               [0, 0, 0, 0],
+                               [0, 0, 0, 0]]),
+        (board_2, Move.right, [[0, 2, 4],
+                               [0, 4, 2]]),
+        (board_2, Move.left, [[4, 2, 0],
+                              [4, 2, 0]]),
+        (board_2, Move.down, [[2, 0, 0],
                               [4, 4, 2]]),
         (board_2, Move.up, [[2, 4, 2],
-                            [4, None, None]])
+                            [4, 0, 0]])
     ])
     def test_move(self, start, move, expected):
         g = Game()
@@ -92,3 +93,12 @@ class TestGame:
 
         g.make_move(move)
         assert result == g.board
+
+class TestEval:
+    def test_eval_numempty(self):
+        assert eval_numempty([[2, 2, 3, 0], [3, 0, 0, 4]]) == 3
+        assert eval_numempty([[0 for c in range(4)] for r in range(4)]) == 16
+
+    def test_eval_smoothness(self):
+        assert eval_smoothness([[2, 0, 0, 2], [3, 4, 2, 3]]) == 1 / (16 + 1)
+        assert eval_smoothness([[0 for c in range(4)] for r in range(4)]) == 1

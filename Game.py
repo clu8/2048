@@ -1,9 +1,6 @@
-﻿#!/usr/bin/env python3
-
-from typing import List, Tuple, Iterable
+﻿from typing import List, Tuple, Iterable
 import random
 from enum import Enum
-import pillow
 
 class Move(Enum):
     left = 1
@@ -17,12 +14,12 @@ class Game(object):
     def __init__(self, rows=4, cols=4) -> None:
         self.rows = rows
         self.cols = cols
-        self.board = [[None] * self.cols for _ in range(self.rows)]
+        self.board = [[0] * self.cols for _ in range(self.rows)]
         self.score = 0
 
     def __str__(self) -> str:
         def serialize(value: int) -> str:
-            s = '.' if value is None else str(value)
+            s = '.' if value == 0 else str(value)
             return '{:4}'.format(s)
 
         return 'Score: {}\n'.format(self.score) + \
@@ -30,7 +27,7 @@ class Game(object):
                        for r in range(self.rows)])
 
     def get_open_squares(self) -> List[Tuple[int, int]]:
-        return [(row, col) for row in range(self.rows) for col in range(self.cols) if self.board[row][col] is None]
+        return [(row, col) for row in range(self.rows) for col in range(self.cols) if self.board[row][col] == 0]
 
     def add_square(self) -> bool:
         open_squares = self.get_open_squares()
@@ -44,10 +41,10 @@ class Game(object):
     def collapse(self, values: Iterable[int]) -> List[int]:
         '''
         Collapses from left to right:
-        [2, 2, 4, 1] -> [None, 4, 4, 1]
-        [None, 4, 4, 4] -> [None, None, 4, 8]
+        [2, 2, 4, 1] -> [0, 4, 4, 1]
+        [0, 4, 4, 4] -> [0, 0, 4, 8]
         '''
-        collapsed = list([x for x in values if x is not None])
+        collapsed = list([x for x in values if x != 0])
         i = len(collapsed) - 1
         while i > 0:
             if collapsed[i] == collapsed[i - 1]:
@@ -55,7 +52,7 @@ class Game(object):
                 collapsed.pop(i - 1)
                 i -= 1
             i -= 1
-        return [None] * (len(values) - len(collapsed)) + collapsed
+        return [0] * (len(values) - len(collapsed)) + collapsed
 
     def make_move(self, move: Move) -> None:
         if move == Move.right:
