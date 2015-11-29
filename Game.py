@@ -47,7 +47,7 @@ class Game(object):
         [2, 2, 4, 1] -> [None, 4, 4, 1]
         [None, 4, 4, 4] -> [None, None, 4, 8]
         '''
-        collapsed = list(filter(lambda x: x is not None, values))
+        collapsed = list([x for x in values if x is not None])
         i = len(collapsed) - 1
         while i > 0:
             if collapsed[i] == collapsed[i - 1]:
@@ -63,10 +63,10 @@ class Game(object):
         elif move == Move.left:
             self.board = [self.collapse(row[::-1])[::-1] for row in self.board]
         elif move == Move.down:
-            transposed = zip(*self.board)
+            transposed = list(zip(*self.board))
             collapsed = [self.collapse(col) for col in transposed]
-            self.board = list(map(lambda x: list(x), zip(*collapsed)))
+            self.board = list([list(x) for x in zip(*collapsed)])
         elif move == Move.up:
-            transposed = zip(*self.board)
+            transposed = list(zip(*self.board))
             collapsed = [self.collapse(col[::-1])[::-1] for col in transposed]
-            self.board = list(map(lambda x: list(x), zip(*collapsed)))
+            self.board = list([list(x) for x in zip(*collapsed)])

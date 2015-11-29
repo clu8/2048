@@ -31,9 +31,9 @@ class TestGame:
     def test_add_square(self):
         g = Game()
         for i in range(16):
-            print(len(g.get_open_squares()))
+            print((len(g.get_open_squares())))
             assert g.add_square() == True
-            print(len(g.get_open_squares()))
+            print((len(g.get_open_squares())))
             assert len(g.get_open_squares()) == 15 - i
         assert g.add_square() == False
         assert len(g.get_open_squares()) == 0
