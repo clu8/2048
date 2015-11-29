@@ -102,3 +102,7 @@ class TestEval:
     def test_eval_smoothness(self):
         assert eval_smoothness([[2, 0, 0, 2], [3, 4, 2, 3]]) == 1 / (16 + 1)
         assert eval_smoothness([[0 for c in range(4)] for r in range(4)]) == 1
+        assert eval_smoothness([[4, 2, 4, 0],
+                                [2, 32, 0, 0],
+                                [2, 16, 64, 128],
+                                [4, 16, 0, 0]]) == 1 / (662 + 1)

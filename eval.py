@@ -15,8 +15,8 @@ def eval_smoothness(board: List[List[int]]):
         for c in range(len(r) - 1):
             smoothness += abs(r[c] - r[c+1])
 
-    transposed = zip(board)
-    for c in board:
+    transposed = zip(*board)
+    for c in transposed:
         for r in range(len(c) - 1):
             smoothness += abs(c[r] - c[r+1])
 
