@@ -37,3 +37,8 @@ def eval_monotonicity(board: List[List[int]]) -> float:
         return switches
 
     return 1 / (row_monotonicity(board) + row_monotonicity(zip(*board)) + 1)
+
+def eval_combined(board: List[List[int]], empty_weight: float = 1, smoothness_weight: float = 10, 
+                  monotonicity_weight: float = 5) -> float:
+    return empty_weight * eval_numempty(board) + smoothness_weight * eval_smoothness(board) \
+        + monotonicity_weight * eval_monotonicity(board)
