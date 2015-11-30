@@ -228,16 +228,19 @@ def run(board, score):
 		else:
 			validActions.remove(humanAction)
 
+# test methods for gameState.py
+
 # move = Move()
 # gameState = GameState2048()
 # gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 # agent = AlphaBetaAgent()
+# validActions = move.getAllMoves()
 
 # for _ in range(100):
 # 	gameState.printBoard(gameState.board)
-# 	humanAction = agent.getAction(gameState, 0)
+# 	humanAction = agent.getAction(gameState, 0, validActions)
 # 	print 'human move: ' + move.moveString(humanAction)
 # 	gameState = gameState.generateSuccessor(0, humanAction)
-# 	computerAction = agent.getAction(gameState, 1)
+# 	computerAction = agent.getAction(gameState, 1, None)
 # 	print 'computer move: ' + str(computerAction)
 # 	gameState = gameState.generateSuccessor(1, computerAction)
