@@ -1,4 +1,5 @@
 ﻿import random
+import evalNew as evaluate
 
 class Move:
 	up, right, down, left = list(range(4))
@@ -139,7 +140,7 @@ class ExpectimaxAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return gameState.getScore()
+		return evaluate.eval_combined(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
@@ -161,7 +162,7 @@ class MinimaxAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return gameState.getScore()
+		return evaluate.eval_combined(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
@@ -183,7 +184,7 @@ class AlphaBetaAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return gameState.getScore()
+		return evaluate.eval_combined(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 
