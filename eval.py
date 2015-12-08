@@ -1,3 +1,6 @@
+import itertools
+import util
+
 def eval_numempty(board):
     '''
     Number of empty squares in board. 
@@ -35,6 +38,18 @@ def eval_monotonicity(board):
         return switches
 
     return 1 / (row_monotonicity(board) + row_monotonicity(zip(*board)) + 1)
+
+SNAKE_WEIGHTS = [4 ** 15, 4 ** 14, 4 ** 13, 4 ** 12,
+                 4 ** 8, 4 ** 9, 4 ** 10, 4 ** 11,
+                 4 ** 7, 4 ** 6, 4 ** 5, 4 ** 4,
+                 4 ** 0, 4 ** 1, 4 ** 2, 4 ** 3]
+def eval_snake(board):
+    '''
+    Linear combination of all squares' values. 
+    Inspired by Hadi Pouransari & Saman Ghili's "AI algorithms for the game 2048".
+    '''
+    unrolled = list(itertools.chain.from_iterable(board))
+    return util.dot_product(SNAKE_WEIGHTS, unrolled)
 
 def eval_combined(board, empty_weight=1.0, smoothness_weight=10.0, 
                   monotonicity_weight=5.0):
