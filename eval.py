@@ -1,4 +1,3 @@
-import itertools
 import util
 
 def eval_numempty(board):
@@ -48,8 +47,7 @@ def eval_snake(board):
     Linear combination of all squares' values. 
     Inspired by Hadi Pouransari & Saman Ghili's "AI algorithms for the game 2048".
     '''
-    unrolled = list(itertools.chain.from_iterable(board))
-    return util.dot_product(SNAKE_WEIGHTS, unrolled)
+    return util.dot_product(SNAKE_WEIGHTS, util.unroll_board(board))
 
 def eval_combined(board, empty_weight=1.0, smoothness_weight=10.0, 
                   monotonicity_weight=5.0):

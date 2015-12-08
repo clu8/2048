@@ -140,7 +140,7 @@ class ExpectimaxAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return eval.eval_combined(gameState.board)
+		return eval.eval_snake(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
@@ -162,7 +162,7 @@ class MinimaxAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return eval.eval_combined(gameState.board)
+		return eval.eval_snake(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
@@ -184,7 +184,7 @@ class AlphaBetaAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return eval.eval_combined(gameState.board)
+		return eval.eval_snake(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 
