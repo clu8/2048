@@ -150,19 +150,23 @@ def run(board, score):
 		else:
 			validActions.remove(humanAction)
 
-# test methods for gameState.py
+def runBackEndOnly():
+	move = Move()
+	gameState = GameState2048()
+	gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+	agent = agents.AlphaBetaAgent()
+	validActions = move.getAllMoves()
 
-# move = Move()
-# gameState = GameState2048()
-# gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-# agent = AlphaBetaAgent()
-# validActions = move.getAllMoves()
+	while True:
+		computerAction = agent.getAction(gameState, 1, None)
+		gameState = gameState.generateSuccessor(1, computerAction)
+		gameState.printBoard(gameState.board)
+		humanAction = agent.getAction(gameState, 0, validActions)
+		if humanAction is None:
+			break
+		print 'human move: ' + move.moveString(humanAction)
+		print 'total score: ' + str(gameState.score) + '\n'
+		gameState = gameState.generateSuccessor(0, humanAction)
 
-# for _ in range(100):
-# 	gameState.printBoard(gameState.board)
-# 	humanAction = agent.getAction(gameState, 0, validActions)
-# 	print 'human move: ' + move.moveString(humanAction)
-# 	gameState = gameState.generateSuccessor(0, humanAction)
-# 	computerAction = agent.getAction(gameState, 1, None)
-# 	print 'computer move: ' + str(computerAction)
-# 	gameState = gameState.generateSuccessor(1, computerAction)
+if __name__ == "__main__":
+	runBackEndOnly()
