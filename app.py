@@ -6,6 +6,7 @@ import time
 import random
 import json
 import sys
+import gameState
 app = Flask(__name__)
 
 record = []
@@ -21,28 +22,30 @@ def move():
 	global last_score
 	# Plug in the algorithm below
 	# 0: Up, 1: Right, 2: Down, 3: Left
+	"""
 	data = {
         'move'  : random.randint(0, 3),
     }
 	js = json.dumps(data)
+	"""
 	# Plug in the algorithm above
 
 	layout = json.loads(request.args.get('layout'))
-	print last_score
-	print record
-	print layout["score"]
-	print layout["grid"]
 	if (layout["score"] < last_score):
-		if (len(record) > 100):
+		if (len(record) > 10):
 			print record
 			sys.exit(0)
 		record.append(last_score)
 	last_score = layout["score"]
+	# time.sleep(0.1)
+	data = {'move': gameState.run(layout["grid"], layout["score"]),}
+
 	# print layout["grid"]
 	# time.sleep(0.01)
-	resp = Response(js, status=200, mimetype='application/json')
+	resp = Response(json.dumps(data), status=200, mimetype='application/json')
 	# print "a"
+
 	return resp
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
