@@ -144,6 +144,8 @@ def run(board, score):
 	validActions = move.getAllMoves()
 	while True:
 		humanAction = agent.getAction(gameState, 0, validActions)
+		if humanAction is None:
+			return None
 		newGameState = gameState.generateSuccessor(0, humanAction)
 		if gameState.board != newGameState.board:
 			return humanAction
