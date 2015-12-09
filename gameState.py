@@ -1,7 +1,8 @@
-import random
+﻿import random
+import agents
 
 class Move:
-	up, right, down, left = range(4)
+	up, right, down, left = list(range(4))
 
 	def getAllMoves(self):
 		return [self.left, self.up, self.right, self.down]
@@ -44,7 +45,7 @@ class GameState2048:
 			return [(row, col) for col in range(self.BOARD_SIZE) for row in range(self.BOARD_SIZE) if self.isTileEmpty(row, col)]
 
 	def collapse(self, values):
-		collapsed = list(filter(lambda x: x != 0, values))
+		collapsed = list([x for x in values if x != 0])
 		i = len(collapsed) - 1
 		while i > 0:
 			if collapsed[i] == collapsed[i - 1]:
@@ -67,15 +68,15 @@ class GameState2048:
 			if action == self.moves.left:
 				state.board = [state.collapse(row[::-1])[::-1] for row in state.board]
 			elif action == self.moves.up:
-				transposed = zip(*state.board)
+				transposed = list(zip(*state.board))
 				collapsed = [state.collapse(col[::-1])[::-1] for col in transposed]
-				state.board = list(map(lambda x: list(x), zip(*collapsed)))
+				state.board = list([list(x) for x in zip(*collapsed)])
 			elif action == self.moves.right:
 				state.board = [state.collapse(row) for row in state.board]
 			elif action == self.moves.down:
-				transposed = zip(*state.board)
+				transposed = list(zip(*state.board))
 				collapsed = [state.collapse(col) for col in transposed]
-				state.board = list(map(lambda x: list(x), zip(*collapsed)))
+				state.board = list([list(x) for x in zip(*collapsed)])
 		else:
 			row, col = action
 			state.board[row][col] = 2 # should we allow 4?
@@ -113,7 +114,7 @@ class GameState2048:
 			for tile in row:
 				text += str(tile) + ' '
 			text += '\n'
-		print text.strip('\n')
+		print(text.strip('\n'))
 
 # game = GameState2048()
 
@@ -134,112 +135,40 @@ class GameState2048:
 # 	print '\nScore', newState.score
 # 	game.printBoard(newState.board)
 
-class ExpectimaxAgent():
-	
-	def __init__(self):
-		self.depth = 3
-
-	def evaluationFunction(self, gameState):
-		return gameState.score
-
-	def getAction(self, gameState, index, validActions):
-		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
-		def recurse(gameState, index, depth):
-			if gameState.isWin() or gameState.isLose():
-				return gameState.getScore(), random.random(), None
-			if depth == 0:
-				return self.evaluationFunction(gameState), random.random(), None
-
-			if index == 0: # human
-				return max([(recurse(gameState.generateSuccessor(index, action), 1, depth)[0], random.random(), action) for action in gameState.getLegalActions(index, validActions)])
-			elif index == 1: # computer
-				return sum([recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0] for action in gameState.getLegalActions(index, validActions)]) / len(gameState.getLegalActions(index, validActions)), random.random(), random.choice(gameState.getLegalActions(index, validActions))
-		utility, rand, action = recurse(gameState, index, self.depth)
-		return action
-
-class MinimaxAgent():
-	
-	def __init__(self):
-		self.depth = 3
-
-	def evaluationFunction(self, gameState):
-		return gameState.score
-
-	def getAction(self, gameState, index, validActions):
-		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
-		def recurse(gameState, index, depth):
-			if gameState.isWin() or gameState.isLose():
-				return gameState.getScore(), random.random(), None
-			if depth == 0:
-				return self.evaluationFunction(gameState), random.random(), None
-
-			if index == 0: # humam
-				return max([(recurse(gameState.generateSuccessor(index, action), 1, depth)[0], random.random(), action) for action in gameState.getLegalActions(index, validActions)])
-			elif index == 1: # computer
-				return min([(recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0], random.random(), action) for action in gameState.getLegalActions(index, validActions)])
-		utility, rand, action = recurse(gameState, index, self.depth)
-		return action
-
-class AlphaBetaAgent():
-	
-	def __init__(self):
-		self.depth = 3
-
-	def evaluationFunction(self, gameState):
-		return gameState.score
-
-	def getAction(self, gameState, index, validActions):
-
-		def recurse(gameState, index, depth, alpha, beta):
-			if gameState.isWin() or gameState.isLose():
-				return gameState.getScore(), random.random(), None
-			if depth == 0:
-				return self.evaluationFunction(gameState), random.random(), None
-			if index == 0: # human
-				maximum = (float('-inf'), random.random(), None)
-				for action in gameState.getLegalActions(index, validActions):
-					maximum = max(maximum, (recurse(gameState.generateSuccessor(index, action), 1, depth, alpha, beta)[0], random.random(), action))
-					alpha = max(alpha, maximum[0]) # maximum[0] is the max utility
-					if beta <= alpha:
-						break
-				return maximum
-			elif index == 1: # computer
-				minimum = (float('inf'), random.random(), None)
-				for action in gameState.getLegalActions(index, validActions):
-					minimum = min(minimum, (recurse(gameState.generateSuccessor(index, action), 0, depth - 1, alpha, beta)[0], random.random(), action))
-					beta = min(beta, minimum[0]) # minimum[0] is the min utility
-					if beta <= alpha:
-						break
-				return minimum
-
-		utility, rand, action = recurse(gameState, index, self.depth, float('-inf'), float('inf'))
-		return action
-
 def run(board, score):
 	move = Move()
 	gameState = GameState2048()
 	gameState.board = board
 	gameState.score = score
-	agent = AlphaBetaAgent()
+	agent = agents.AlphaBetaAgent()
 	validActions = move.getAllMoves()
 	while True:
 		humanAction = agent.getAction(gameState, 0, validActions)
+		if humanAction is None:
+			return None
 		newGameState = gameState.generateSuccessor(0, humanAction)
 		if gameState.board != newGameState.board:
 			return humanAction
 		else:
 			validActions.remove(humanAction)
 
-# move = Move()
-# gameState = GameState2048()
-# gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-# agent = AlphaBetaAgent()
+def runBackEndOnly():
+	move = Move()
+	gameState = GameState2048()
+	gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+	agent = agents.AlphaBetaAgent()
+	validActions = move.getAllMoves()
 
-# for _ in range(100):
-# 	gameState.printBoard(gameState.board)
-# 	humanAction = agent.getAction(gameState, 0)
-# 	print 'human move: ' + move.moveString(humanAction)
-# 	gameState = gameState.generateSuccessor(0, humanAction)
-# 	computerAction = agent.getAction(gameState, 1)
-# 	print 'computer move: ' + str(computerAction)
-# 	gameState = gameState.generateSuccessor(1, computerAction)
+	while True:
+		computerAction = agent.getAction(gameState, 1, None)
+		gameState = gameState.generateSuccessor(1, computerAction)
+		gameState.printBoard(gameState.board)
+		humanAction = agent.getAction(gameState, 0, validActions)
+		if humanAction is None:
+			break
+		print 'human move: ' + move.moveString(humanAction)
+		print 'total score: ' + str(gameState.score) + '\n'
+		gameState = gameState.generateSuccessor(0, humanAction)
+
+if __name__ == "__main__":
+	runBackEndOnly()

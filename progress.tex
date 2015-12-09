@@ -109,9 +109,15 @@ We use a lightweight Python web framework called Flask. On the front end, we sen
 
 \section{Preliminary experimental results}
 
-First, we implement a randomized moving algorithm to test the basic performance of our simulator. At each step, a move is randomly chosen (up, right, down, left) and applied. For this task our simulator produces satisfying performance in executing the moves and visualizing results. Through multiple runs, our mean total score is 1394 and the variance is 836. Most of the scores stays in the range of 1300~1500, with the highest tile almost never going over 128. Occasionally the game terminates early with significantly lower score.
+First, we implement a randomized moving algorithm to test the basic performance of our simulator. At each step, a move is randomly chosen (up, right, down, left) and applied. For this task our simulator produces satisfying performance in executing the moves and visualizing results. Through multiple runs, our mean total score is 1082 and the standard deviation is 532. Most of the scores stays in the range of 900-1200, with the highest tile almost never going over 128. Occasionally the game terminates early with significantly lower score.
 
-With the working basic algorithm, we moved on to implementing a more advanced AI algorithm, the expectimax algorithm, mentioned above. We find out that even with limited search depth and an unrefined rudimentary evaluation function (only consider the current score), we are able to generate significantly better results than randomized movement. The highest tile goes beyond 1024 every time, and occasionally wins the game. The mean score through multiple runs is 5419 and the variance is 1601.
+\begin{centering}
+
+\includegraphics[width=90mm]{2048_screenshot2.jpg}
+
+\end{centering}
+
+With the working basic algorithm, we moved on to implementing a more advanced AI algorithm, the expectimax algorithm, mentioned above. We find out that even with limited search depth and an unrefined rudimentary evaluation function (only consider the current score), we are able to generate significantly better results than randomized movement. The highest tile goes beyond 1024 every time, and occasionally wins the game. The mean score through multiple runs is 5419 and the standard deviation is 1601.
 
 \begin{thebibliography}{9}
 
