@@ -162,13 +162,14 @@ def runBackEndOnly():
 	while True:
 		computerAction = agent.getAction(gameState, 1, None)
 		gameState = gameState.generateSuccessor(1, computerAction)
-		gameState.printBoard(gameState.board)
+		# gameState.printBoard(gameState.board)
 		humanAction = agent.getAction(gameState, 0, validActions)
 		if humanAction is None:
 			break
-		print 'human move: ' + move.moveString(humanAction)
-		print 'total score: ' + str(gameState.score) + '\n'
+		# print 'human move: ' + move.moveString(humanAction)
+		# print 'total score: ' + str(gameState.score) + '\n'
 		gameState = gameState.generateSuccessor(0, humanAction)
+	print 'total score: ' + str(gameState.score)
 
 if __name__ == "__main__":
 	runBackEndOnly()
