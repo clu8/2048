@@ -2,8 +2,8 @@ import random
 import eval
 
 class ExpectimaxAgent():
-	def __init__(self):
-		self.depth = 2
+	def __init__(self, depth=2):
+		self.depth = depth
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_snake(gameState.board)
@@ -28,8 +28,8 @@ class ExpectimaxAgent():
 		return random.choice(gameState.getLegalActions(1, validActions))
 
 class MinimaxAgent():
-	def __init__(self):
-		self.depth = 3
+	def __init__(self, depth=3):
+		self.depth = depth
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_snake(gameState.board)
@@ -50,8 +50,8 @@ class MinimaxAgent():
 		return action
 
 class AlphaBetaAgent():
-	def __init__(self):
-		self.depth = 3
+	def __init__(self, depth=3):
+		self.depth = depth
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_monotonicity(gameState.board)
