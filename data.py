@@ -10,7 +10,7 @@ DATA_FILE_PATH = 'data/all_data.csv'
 
 class MoveWriter(object):
     def __enter__(self, file_path=DATA_FILE_PATH):
-        self.f = open(file_path, 'wa')
+        self.f = open(file_path, 'a')
         self.writer = csv.writer(self.f)
         return self
 

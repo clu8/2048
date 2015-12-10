@@ -1,5 +1,6 @@
 ﻿import random
 import agents
+import data
 
 class Move:
     up, right, down, left = list(range(4))
@@ -149,39 +150,48 @@ def run(board, score):
         else:
             validActions.remove(humanAction)
 
-def simulate(num_games=1, verbose=False):
+def simulate(num_games=1, save_to_csv=False, verbose=False):
     '''
     Returns list of (score, num_moves) tuples.
+    If save_to_csv is set to True, it saves each board state and the recommended move using MoveWriter. 
     '''
-    results = []
+    def go(mw=None):
+        results = []
+        for _ in range(num_games):
+            gameState = GameState2048()
+            num_moves = 0
+            while True:
+                num_moves += 1
+
+                computerAction = agent.getAction(gameState, 1, None)
+                if computerAction is None:
+                    break
+                gameState = gameState.generateSuccessor(1, computerAction)
+
+                humanAction = agent.getAction(gameState, 0, validActions)
+                if humanAction is None:
+                    break
+                if verbose:
+                    print(gameState)
+                    print('Agent move: {}\n'.format(move.moveString(humanAction)))
+                if mw is not None:
+                    mw.write_move(gameState.board, humanAction)
+
+                gameState = gameState.generateSuccessor(0, humanAction)
+
+            print(gameState)
+            results.append((gameState.score, num_moves))
+        return results
 
     move = Move()
     agent = agents.ExpectimaxAgent()
     validActions = move.getAllMoves()
 
-    for i in range(num_games):
-        gameState = GameState2048()
-        num_moves = 0
-        while True:
-            num_moves += 1
-
-            computerAction = agent.getAction(gameState, 1, None)
-            if computerAction is None:
-                break
-            gameState = gameState.generateSuccessor(1, computerAction)
-
-            humanAction = agent.getAction(gameState, 0, validActions)
-            if humanAction is None:
-                break
-            if verbose:
-                print(gameState)
-                print('Agent move: {}\n'.format(move.moveString(humanAction)))
-            gameState = gameState.generateSuccessor(0, humanAction)
-
-        print(gameState)
-        results.append((gameState.score, num_moves))
-
-    return results
+    if save_to_csv:
+        with data.MoveWriter() as mw:
+            return go(mw)
+    else:
+        return go()
 
 if __name__ == '__main__':
-    print(simulate(5, True))
+    print(simulate(5, True, True))
