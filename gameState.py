@@ -107,14 +107,14 @@ class GameState2048:
         assert value ^ (value - 1) # value should be power of 2
         self.board[row][col] = value
 
-    @staticmethod
-    def printBoard(board):
-        text = ''
-        for row in board:
-            for tile in row:
-                text += str(tile) + ' '
-            text += '\n'
-        print(text.strip('\n'))
+    def __str__(self):
+        def serialize(value):
+            s = '.' if value == 0 else str(value)
+            return '{:4}'.format(s)
+
+        return 'Score: {}\n'.format(self.score) + \
+            '\n'.join([' '.join([serialize(self.board[r][c]) for c in range(self.BOARD_SIZE)]) 
+                       for r in range(self.BOARD_SIZE)])
 
 # game = GameState2048()
 
@@ -129,12 +129,10 @@ class GameState2048:
 # assert game.isWin() == True
 
 # game.board = [[2, 2, 0, 0], [4, 2, 8, 0], [0, 2, 0, 0], [0, 2, 0, 0]]
-# game.printBoard(game.board)
 
 # for move in game.getLegalActions(0):
 #   newState = game.generateSuccessor(0, move)
 #   print '\nScore', newState.score
-#   game.printBoard(newState.board)
 def run(board, score):
     move = Move()
     gameState = GameState2048()
@@ -158,8 +156,9 @@ def simulate(num_games=1, verbose=False):
     '''
     results = []
 
+    move = Move()
     agent = agents.ExpectimaxAgent()
-    validActions = Move().getAllMoves()
+    validActions = move.getAllMoves()
 
     for i in range(num_games):
         gameState = GameState2048()
@@ -178,16 +177,14 @@ def simulate(num_games=1, verbose=False):
                 break
 
             if verbose:
-                gameState.printBoard(gameState.board)
-                print('Human move: ' + move.moveString(humanAction))
-                print('Total score: ' + str(gameState.score) + '\n')
+                print(gameState)
+                print('Human move: {}\n'.format(move.moveString(humanAction)))
             gameState = gameState.generateSuccessor(0, humanAction)
 
-        gameState.printBoard(gameState.board)
-        print('Total score: ' + str(gameState.score))
+        print(gameState)
         results.append((gameState.score, num_moves))
 
     return results
 
-if __name__ == "__main__":
-    print(simulate())
+if __name__ == '__main__':
+    print(simulate(2))
