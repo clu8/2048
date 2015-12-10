@@ -24,7 +24,6 @@ class GameState2048:
     """
 
     BOARD_SIZE = 4
-    WINNING_TILE = 2048
 
     def __init__(self, prevState=None):
         if prevState:
@@ -37,7 +36,7 @@ class GameState2048:
 
     def getLegalActions(self, agentIndex=0, validActions=None):
         assert agentIndex == 0 or agentIndex == 1
-        if self.isWin() or self.isLose():
+        if self.isLose():
             return []
         if agentIndex == 0: # human player
             return self.moves.getAllMoves() if not validActions else validActions
@@ -58,7 +57,7 @@ class GameState2048:
 
     def generateSuccessor(self, agentIndex, action):
         # Check that successors exist
-        if self.isWin() or self.isLose():
+        if self.isLose():
             raise Exception('Can\'t generate a successor of a terminal state.')
 
         # Copy current state
@@ -83,10 +82,10 @@ class GameState2048:
 
         return state
 
-    def isWin(self):
+    def checkForTile(self, tileValue=2048):
         for row in self.board:
             for tile in row:
-                if tile == self.WINNING_TILE:
+                if tile == tileValue:
                     return True
         return False
 
@@ -165,20 +164,18 @@ def simulate(num_games=1, verbose=False):
         num_moves = 0
         while True:
             num_moves += 1
-            # Generic action line
+
             computerAction = agent.getAction(gameState, 1, None)
-            # computerAction = agent.getComputerAction(gameState, validActions)
-            try:
-                gameState = gameState.generateSuccessor(1, computerAction)
-            except:
+            if computerAction is None:
                 break
+            gameState = gameState.generateSuccessor(1, computerAction)
+
             humanAction = agent.getAction(gameState, 0, validActions)
             if humanAction is None:
                 break
-
             if verbose:
                 print(gameState)
-                print('Human move: {}\n'.format(move.moveString(humanAction)))
+                print('Agent move: {}\n'.format(move.moveString(humanAction)))
             gameState = gameState.generateSuccessor(0, humanAction)
 
         print(gameState)
@@ -187,4 +184,4 @@ def simulate(num_games=1, verbose=False):
     return results
 
 if __name__ == '__main__':
-    print(simulate(2))
+    print(simulate(5, True))

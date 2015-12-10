@@ -11,7 +11,7 @@ class ExpectimaxAgent():
 	def getAction(self, gameState, index, validActions):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
 		def recurse(gameState, index, depth):
-			if gameState.isWin() or gameState.isLose():
+			if gameState.isLose():
 				return gameState.getScore(), random.random(), None
 			if depth == 0:
 				return self.evaluationFunction(gameState), random.random(), None
@@ -37,7 +37,7 @@ class MinimaxAgent():
 	def getAction(self, gameState, index, validActions):
 		# Return (minimax value Vopt(state), random number, optimal action pi_opt(state))
 		def recurse(gameState, index, depth):
-			if gameState.isWin() or gameState.isLose():
+			if gameState.isLose():
 				return gameState.getScore(), random.random(), None
 			if depth == 0:
 				return self.evaluationFunction(gameState), random.random(), None
@@ -59,7 +59,7 @@ class AlphaBetaAgent():
 	def getAction(self, gameState, index, validActions):
 
 		def recurse(gameState, index, depth, alpha, beta):
-			if gameState.isWin() or gameState.isLose():
+			if gameState.isLose():
 				return gameState.getScore(), random.random(), None
 			if depth == 0:
 				return self.evaluationFunction(gameState), random.random(), None
