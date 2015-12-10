@@ -61,3 +61,6 @@ proposal.fdb_latexmk
 proposal.aux
 proposal.log
 proposal.synctex.gz
+
+# sftp set up
+sftp-config.json

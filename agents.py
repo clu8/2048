@@ -3,7 +3,7 @@ import eval
 
 class ExpectimaxAgent():
 	def __init__(self):
-		self.depth = 3
+		self.depth = 2
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_snake(gameState.board)
@@ -22,6 +22,10 @@ class ExpectimaxAgent():
 				return sum([recurse(gameState.generateSuccessor(index, action), 0, depth - 1)[0] for action in gameState.getLegalActions(index, validActions)]) / len(gameState.getLegalActions(index, validActions)), random.random(), random.choice(gameState.getLegalActions(index, validActions))
 		utility, rand, action = recurse(gameState, index, self.depth)
 		return action
+
+	def getComputerAction(self, gameState, validActions):
+		print 1
+		return random.choice(gameState.getLegalActions(1, validActions))
 
 class MinimaxAgent():
 	def __init__(self):
@@ -50,7 +54,7 @@ class AlphaBetaAgent():
 		self.depth = 3
 
 	def evaluationFunction(self, gameState):
-		return eval.eval_snake(gameState.board)
+		return eval.eval_monotonicity(gameState.board)
 
 	def getAction(self, gameState, index, validActions):
 

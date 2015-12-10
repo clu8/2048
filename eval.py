@@ -36,7 +36,7 @@ def eval_monotonicity(board):
                     increasing = False
         return switches
 
-    return 1 / (row_monotonicity(board) + row_monotonicity(zip(*board)) + 1)
+    return 1.0 / (row_monotonicity(board) + row_monotonicity(zip(*board)) + 1)
 
 SNAKE_WEIGHTS = [4 ** 15, 4 ** 14, 4 ** 13, 4 ** 12,
                  4 ** 8, 4 ** 9, 4 ** 10, 4 ** 11,

@@ -154,22 +154,27 @@ def run(board, score):
 
 def runBackEndOnly():
 	move = Move()
-	gameState = GameState2048()
-	gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+	# agent = agents.ExpectimaxAgent()
 	agent = agents.AlphaBetaAgent()
 	validActions = move.getAllMoves()
 
-	while True:
-		computerAction = agent.getAction(gameState, 1, None)
-		gameState = gameState.generateSuccessor(1, computerAction)
-		# gameState.printBoard(gameState.board)
-		humanAction = agent.getAction(gameState, 0, validActions)
-		if humanAction is None:
-			break
-		# print 'human move: ' + move.moveString(humanAction)
-		# print 'total score: ' + str(gameState.score) + '\n'
-		gameState = gameState.generateSuccessor(0, humanAction)
-	print 'total score: ' + str(gameState.score)
+	for i in range(1):
+		gameState = GameState2048()
+		gameState.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+		while True:
+			# Generic action line
+			computerAction = agent.getAction(gameState, 1, None)
+			# computerAction = agent.getComputerAction(gameState, validActions)
+			gameState = gameState.generateSuccessor(1, computerAction)
+			gameState.printBoard(gameState.board)
+			humanAction = agent.getAction(gameState, 0, validActions)
+			if humanAction is None:
+				break
+			print 'human move: ' + move.moveString(humanAction)
+			print 'total score: ' + str(gameState.score) + '\n'
+			gameState = gameState.generateSuccessor(0, humanAction)
+		print 'total score: ' + str(gameState.score)
+
 
 if __name__ == "__main__":
 	runBackEndOnly()
