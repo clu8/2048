@@ -24,8 +24,8 @@ class ExpectimaxAgent():
 		return action
 
 	def getComputerAction(self, gameState, validActions):
-		print 1
-		return random.choice(gameState.getLegalActions(1, validActions))
+		actions = gameState.getLegalActions(1, validActions)
+		return random.choice(actions) if len(actions) > 0 else None
 
 class MinimaxAgent():
 	def __init__(self):

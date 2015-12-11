@@ -6,7 +6,7 @@ import time
 import random
 import json
 import sys
-import gameState
+import play
 app = Flask(__name__)
 
 record = []
@@ -38,7 +38,7 @@ def move():
 		record.append(last_score)
 	last_score = layout["score"]
 	# time.sleep(0.1)
-	data = {'move': gameState.run(layout["grid"], layout["score"]),}
+	data = {'move': play.run(layout["grid"], layout["score"]),}
 
 	# print layout["grid"]
 	# time.sleep(0.01)
