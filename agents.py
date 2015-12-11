@@ -124,8 +124,9 @@ class AlphaBetaAgent():
         return action
 
 class LogisticAgent():
-    def __init__(self):
-        self.predict = reflex.train()
+    def __init__(self, feature_transform):
+        self.feature_transform = feature_transform
+        self.predict = reflex.train(feature_transform)
 
     def getAction(self, gameState, index, validActions):
         if gameState.isLose():
@@ -135,6 +136,8 @@ class LogisticAgent():
             unrolled = util.unroll_board(gameState.board)
             x = numpy.asarray(unrolled)
             x = x.reshape(1, x.shape[0])
+            if self.feature_transform:
+                x = numpy.log2(x)
             predictions = [(self.predict[move](x), move) for move in range(4)]
             predictions.sort(reverse=True)
             if predictions[0][1] in validActions:

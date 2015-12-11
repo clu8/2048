@@ -322,7 +322,7 @@ def train_with_val(learning_rate=0.13, n_epochs=3, batch_size=600):
         % (best_validation_loss * 100., test_score * 100.)
     )
 
-def train():
+def train(feature_transform):
     inputs, labels = data.read_data()
 
     # shuffle data
@@ -331,6 +331,9 @@ def train():
     random.shuffle(shuffled)
     inputs = numpy.asarray([example[0] for example in shuffled])
     labels = [numpy.asarray([1 if example[1] == label else 0 for example in shuffled]) for label in range(4)]
+
+    if feature_transform:
+        inputs = numpy.log2(inputs)
 
     training_steps = 20000
 
@@ -359,6 +362,3 @@ def train():
             pred, err = train[l](inputs, labels[l])
 
     return predict
-
-if __name__ == '__main__':
-    train()
