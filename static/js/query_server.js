@@ -47,10 +47,12 @@ function query_server(gameManager) {
     	Parsed to the following format:
     	grid: 		[int[4], int[4], int[4], int[4]], (0 if no grid present)
     	score: 		int
+    	won:        won
 	 */
 	function parseLayout(layout) {
 		data = {};
 		data.score = layout.score;
+		data.won = layout.won;
 		data.grid = [[], [], [], []];
 		for (i = 0; i < layout.grid.size; i++) {
 			for (j = 0; j < layout.grid.size; j++) {
