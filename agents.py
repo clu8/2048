@@ -27,6 +27,24 @@ class UpDownAgent():
 			actions = gameState.getLegalActions(index, validActions)
 			return None if len(actions) == 0 else random.choice(actions)
 
+class UpLeftAgent():
+	def __init__(self):
+		self.upMove, self.leftMove = 0, 3
+		self.lastMove = self.upMove
+
+	def getAction(self, gameState, index, validActions):
+		if gameState.isLose():
+			return None
+		if index == 0: # human player
+			if self.lastMove == self.upMove:
+				self.lastMove = self.leftMove
+			else:
+				self.lastMove = self.upMove
+			return self.lastMove
+		else:
+			actions = gameState.getLegalActions(index, validActions)
+			return None if len(actions) == 0 else random.choice(actions)
+
 class ExpectimaxAgent():
 	def __init__(self, depth=2):
 		self.depth = depth
