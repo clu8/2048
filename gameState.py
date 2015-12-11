@@ -1,4 +1,5 @@
 ﻿import random
+import agents
 
 class Move:
     up, right, down, left = list(range(4))
@@ -130,58 +131,4 @@ class GameState2048:
 
 # for move in game.getLegalActions(0):
 #   newState = game.generateSuccessor(0, move)
-#   print '\nScore', newState.score
-def run(board, score):
-    move = Move()
-    gameState = GameState2048()
-    gameState.board = board
-    gameState.score = score
-    agent = agents.AlphaBetaAgent()
-    validActions = move.getAllMoves()
-    while True:
-        humanAction = agent.getAction(gameState, 0, validActions)
-        if humanAction is None:
-            return None
-        newGameState = gameState.generateSuccessor(0, humanAction)
-        if gameState.board != newGameState.board:
-            return humanAction
-        else:
-            validActions.remove(humanAction)
-
-def simulate(num_games=1, verbose=False):
-    '''
-    Returns list of (score, num_moves) tuples.
-    '''
-    results = []
-
-    move = Move()
-    agent = agents.ExpectimaxAgent()
-    validActions = move.getAllMoves()
-
-    for i in range(num_games):
-        gameState = GameState2048()
-        num_moves = 0
-        while True:
-            num_moves += 1
-
-            computerAction = agent.getComputerAction(gameState, None)
-            if computerAction is None:
-                break
-            gameState = gameState.generateSuccessor(1, computerAction)
-
-            humanAction = move.getAllMoves()[int(raw_input())]
-            if humanAction is None:
-                break
-            if verbose:
-                print(gameState)
-                print('Agent move: {}\n'.format(move.moveString(humanAction)))
-            gameState = gameState.generateSuccessor(0, humanAction)
-
-        print(gameState)
-        results.append((gameState.score, num_moves))
-
-    return results
-
-if __name__ == '__main__':
-    print(simulate(5, True))
 #   print '\nScore', newState.score

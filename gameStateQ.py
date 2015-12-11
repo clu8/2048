@@ -1,5 +1,16 @@
 import random
 import agents
+from subprocess import Popen, PIPE, STDOUT
+import time
+import json
+import sys
+
+last_score = 0
+ind = 0
+p = Popen(['th', 'gameStateQ.lua'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+score_record = []
+max_score = 0
+
 
 class Move:
     up, right, down, left = list(range(4))
@@ -33,6 +44,10 @@ class GameState2048:
             self.board = [[0 for _ in range(self.BOARD_SIZE)] for _ in range(self.BOARD_SIZE)] # store the value at each tile, 0 means empty
             self.score = 0
         self.moves = Move()
+        self.won = False
+        row = random.randrange(4)
+        col = random.randrange(4)
+        self.board[row][col] = 2 if random.random() < 0.9 else 4
 
     def getLegalActions(self, agentIndex=0, validActions=None):
         assert agentIndex == 0 or agentIndex == 1
@@ -58,7 +73,8 @@ class GameState2048:
     def generateSuccessor(self, agentIndex, action):
         # Check that successors exist
         if self.isLose():
-            raise Exception('Can\'t generate a successor of a terminal state.')
+            # raise Exception('Can\'t generate a successor of a terminal state.')
+            return None
 
         # Copy current state
         state = GameState2048(self)
@@ -78,8 +94,12 @@ class GameState2048:
                 state.board = list([list(x) for x in zip(*collapsed)])
         else:
             row, col = action
-            state.board[row][col] = 2 # should we allow 4?
+            state.board[row][col] = 2 if random.random() < 0.9 else 4
 
+        for row in self.board:
+            for grid in row:
+                if grid >= 2048:
+                    self.won = True
         return state
 
     def checkForTile(self, tileValue=2048):
@@ -132,57 +152,102 @@ class GameState2048:
 # for move in game.getLegalActions(0):
 #   newState = game.generateSuccessor(0, move)
 #   print '\nScore', newState.score
-def run(board, score):
-    move = Move()
-    gameState = GameState2048()
-    gameState.board = board
-    gameState.score = score
-    agent = agents.AlphaBetaAgent()
-    validActions = move.getAllMoves()
-    while True:
-        humanAction = agent.getAction(gameState, 0, validActions)
-        if humanAction is None:
-            return None
-        newGameState = gameState.generateSuccessor(0, humanAction)
-        if gameState.board != newGameState.board:
-            return humanAction
-        else:
-            validActions.remove(humanAction)
 
-def simulate(num_games=1, verbose=False):
-    '''
-    Returns list of (score, num_moves) tuples.
-    '''
-    results = []
+def getComputerAction(gameState, validActions):
+    actions = gameState.getLegalActions(1, validActions)
+    return None if len(actions) == 0 else random.choice(actions)
 
-    move = Move()
-    agent = agents.ExpectimaxAgent()
-    validActions = move.getAllMoves()
 
-    for i in range(num_games):
-        gameState = GameState2048()
-        num_moves = 0
-        while True:
-            num_moves += 1
+def move(gameState):
+    
+    global last_score
+    global ind
+    global f
+    global score_record
+    global max_score
 
-            computerAction = agent.getAction(gameState, 1, None)
-            if computerAction is None:
-                break
-            gameState = gameState.generateSuccessor(1, computerAction)
+    ### Book keeping of score
+    new_score = gameState.score
+    print "score", new_score
+    if new_score > max_score:
+        max_score = new_score
+    score_record.append(new_score)
+    if len(score_record) == 10240:
+        f = open('qlearning/trainingRecord.csv', 'a')
+        f.write(str((float(sum(score_record))/(len(score_record)))) + "\n")
+        f.close()
+        score_record = []
+    new_won = gameState.won
+    reward = 0
+    if new_won:
+        reward = 100000
+    if (new_score < last_score):
+        # print "record", new_score
+        # f.write(str(last_score) + "\n")
+        if not new_won:
+            reward = -2000
+    else:
+        if not new_won:
+            reward = new_score - last_score
+    last_score = new_score
+    print "reward", reward
 
-            if verbose:
-                print(gameState)
-            humanAction = move.getAllMoves()[int(raw_input())]
-            if humanAction is None:
-                break
-            else:
-                print('Agent move: {}\n'.format(move.moveString(humanAction)))
-            gameState = gameState.generateSuccessor(0, humanAction)
+    ### Input to lua process
+    # print "layout", gameState.board
+    layoutStr = gridToStr(gameState.board, reward)
+    # print "input", layoutStr
+    p.stdin.write(layoutStr)
 
-        print(gameState)
-        results.append((gameState.score, num_moves))
+    qOutput = p.stdout.readline()
+    # print "output", qOutput
+    print "index", str(ind)
 
-    return results
+    ### Feed move into front-end
+    # data = {'move': int(qOutput),}
+    # resp = Response(json.dumps(data), status=200, mimetype='application/json')
+
+    # Keep track of number of moves
+    ind += 1
+    return int(qOutput)                     # 0: Up, 1: Right, 2: Down, 3: Left
+    
+    """
+    global ind
+    ind += 1
+    print "index", str(ind)
+    p.stdin.write("2 2 0 0 4 2 8 0 0 2 0 0 0 2 0 0 -50 0\n")
+    return int(p.stdout.readline())
+    """
+
+def gridToStr(layout, reward):
+    global max_score
+    gridStr = ""
+    for row in layout:
+        for num in row:
+            gridStr += str(num) + " "
+    return gridStr + str(reward) + " " +  str(max_score) + " \n"
+
 
 if __name__ == '__main__':
-    print(simulate(5, True))
+    validActions = Move().getAllMoves()
+    gameState = GameState2048()
+    agent = agents.ExpectimaxAgent()
+    lastState = gameState
+    while True:
+        time.sleep(1)
+        if lastState.board != gameState.board:
+            computerAction = getComputerAction(gameState, None)
+            if computerAction is None:
+                gameState = GameState2048()
+                continue
+            gameState = gameState.generateSuccessor(1, computerAction)
+        print "computer"
+        print(gameState)
+        lastState = gameState
+        # print "board", gameState.board
+        humanAction = move(gameState)
+        gameState = gameState.generateSuccessor(0, humanAction)
+        if gameState is None:
+            gameState = GameState2048()
+            continue
+        print "human"
+        print(gameState)
