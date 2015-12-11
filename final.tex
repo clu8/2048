@@ -1,12 +1,12 @@
-\documentclass[11pt,twocolumn]{article}
+\documentclass[10pt,twocolumn]{article}
 
 \usepackage{amsmath,amssymb,enumerate,algorithm,algorithmic,fullpage,graphicx}
 
 \usepackage{setspace}
+
 \onehalfspacing
 \setlength{\columnsep}{1cm}
-
-% \everymath{\displaystyle}
+\everymath{\displaystyle}
 
 \title{CS 221 Project Report \\ Applying Varied Artificial Intelligence Techniques to Play 2048}
 \author{Zhiyang He, Charles Lu, Stephen Ou \\ \texttt{\{hzyjerry,clu8,sdou\}@stanford.edu}}
@@ -18,7 +18,7 @@
 
 \section{Introduction}
 
-Released in 2014, the single-player puzzle game 2048 quickly became a worldwide sensation: in addition to hijacking classrooms and quickly occupying people’s phone screens, it also spawned countless spin-offs, strategy guides, and self-professed gurus. Meanwhile, the game offers a good platform to experiment and compare both traditional and cutting edge artificial intelligence techniques.
+Released in 2014, the single-player puzzle game 2048 quickly became a worldwide sensation: in addition to hijacking classrooms and quickly occupying people's phone screens, it also spawned countless spin-offs, strategy guides, and self-professed gurus. Meanwhile, the game offers a good platform to experiment and compare both traditional and cutting edge artificial intelligence techniques.
 
 2048 is played on a 4 by 4 grid. Every turn, a random tile with a value 2 or 4 will appear on an empty cell. Then the player can choose to slide left, right, up, or down. All the tiles will slide all the way towards that direction. If any two tiles collide and have the same value, they will merge into one tile, with a new value being the sum of the two old tiles. Additionally, when two tiles collide, the score will be incremented by the value of the newly merged title. There are two ways to end the game. If the value of one tile reaches 2048, the game is considered a win (though the player can continue playing). Otherwise, if all the cells on the grid are occupied with mismatched tiles and no move is possible, the game is lost.
 
@@ -34,6 +34,30 @@ There are two main methods that are available through the 2048 game state: \text
 
 \texttt{generateSuccessor()}: If the current agent is the human, all the tiles will slide in the direction specified. If the two neighboring tiles in that direction have the same value, they will collide and form a new tile with a new value that is the sum of the two old values. For example, if the board currently consists of only two tiles, both with a value of 2, at the bottom row. Swiping left will result in a merged tile with a value of 4, sitting in the bottom left corner. Next, if the current agent is the computer, a new tile with the value of 2 will be added at the specified cell given by the row and column number.
 
+In order to maximize the game score of 2048, we initially built six agents, three of which are baseline algorithms and three of which are more advanced search algorithms that we learned in class.
+
+\begin{enumerate}[1)]
+
+\item Random agent. This baseline agent simply picks a random move.
+
+\item Up down agent. This baseline agent alternates between moving up and down.
+
+\item Up left agent. This baseline agent alternates between moving up and left.
+
+\item Expectimax agent. This applies the expectimax agent that we learned in class.
+
+\item Minimax agent. This applies the minimax agent that we learned in class.
+
+\item Minimax agent with alpha-beta pruning. This applies the alpha-beta pruning agent that we learned in class.
+
+\end{enumerate}
+
+For the expectimax, minimax, and alpha-beta pruning agents, which require a way to score the current game state, we experimented with a number of evaluation functions. Though the purpose of this project was not to find the ideal evaluation function or tune perfect hyperparameters for the evaluation functions we wrote, the best evaluation function we used with the expectimax agent (with a depth of 3) had a win rate of 100 percent (getting to 2048 on every game).
+
+Though the expectimax agent yielded very good results, the main disadvantage of using it was its computation time. With a branching factor of up to 4 for the player’s move and up to 16 for the computer’s move (placing an empty tile), it is quite infeasible to search the game tree to a large depth without pruning. Specifically, on a modern laptop, it took the expectimax agent with depth 3 almost a second per move. 
+
+Therefore, we next attempted to use the “optimal” moves suggested by the expectimax agent (depth 3) to train various reflex models using different machine learning techniques. Specifically, to generate the training, validation, and test datasets, we simply ran multiple playthroughs of 2048 using the search agent, and saved each game board state and the corresponding recommended move as a single data point. 
+
 \section{Infrastructure}
 
 We built a frontend interface for 2048 setup. We forked the original 2048 repository by Gabriele Cirulli and added our custom Javascript functions that talk to a lightweight Python server that computes the optimal move. The setup used an Flask, an open source Python web framework. We wrote a JavaScript function that serializes the current board as a string and passes it to the Flask server via an AJAX request. The server computes the optimal move using a specified approach, and returns a response back to the frontend. Then, a callback JavaScript function updates the board using the optimal move. 
@@ -46,9 +70,15 @@ To further increase the speed of the simulation, we decided to take advantages o
 
 \section{Approaches}
 
-Hello
+We applied several different agents to the 2048 game, each using a different technique—either a strategy specific to 2048, a search strategy using the game tree, a reflex strategy, or a reinforcement learning strategy.
 
-\begin{table}[]
+For each strategy, we simulate the game for 300 times and record their scores. Then we compute detailed statistics so we can compare which strategy performs the best.
+
+\subsection{Basic Strategies}
+
+The first agent that we wrote was a random agent that simply picks a random move without considering the game state. This is meant to serve as a baseline.
+
+\begin{table}[!htbp]
 
 \centering
 
@@ -65,7 +95,9 @@ Standard Deviation & 280.527 \\ \hline
 
 \end{table}
 
-\begin{table}[]
+The up down agent alternates between moving up and down. This method simulates a player who does not play randomly and simply swipes up and down.
+
+\begin{table}[!htbp]
 
 \centering
 
@@ -82,7 +114,9 @@ Standard Deviation & 18.791 \\ \hline
 
 \end{table}
 
-\begin{table}[]
+The up left agent alternates between moving left and right. This method is employed by many novice player as a shortcut to get to a high score. This is meant to trap the highest value tile towards the top left corner and make it easy to combine similar valued tiles.
+
+\begin{table}[!htbp]
 
 \centering
 
@@ -99,7 +133,26 @@ Standard Deviation & 261.353 \\ \hline
 
 \end{table}
 
-\begin{table}[]
+\subsection{Search Strategies}
+
+In terms of search strategies, we tried out expectimax, minimax, and minimax with alpha-beta pruning. In the normal game of 2048, the computer move (where the new tile is inserted) is randomized, so technically only the expectimax strategy makes sense in that environment. However, we wanted to experiment with minimax strategy as well to see how the score differs if the computer aims to minimize the player’s score when inserting a new tile.
+
+Because of the number of path to explore in the game state is huge, our initial experimentation uses a depth of 2. Once the depth reaches 2, we utilized the several evaluation functions that we developed to provide an accurate estimate of how “good” the current game board is.
+
+Regarding the evaluation functions once the specified depth has been reached, we have tried four different ones:
+
+\begin{enumerate}
+
+\item Snake evaluation function. This evaluation function values tiles on the top left corner and devalues tiles on the bottom right corner. In effect, this moves the higher value tiles towards the top left and lower value tiles towards the bottom right.
+\item Game score evaluation function. This evaluation function looks at the current score of the board and uses that to determine the value of the board.
+\item Monotonicity evaluation function. This evaluation function measures how much the rows and cols are sorted in increasing or descending order. Specifically we count the total number of times the rows and cols switch from increasing to decreasing or vice versa. Smaller is better so we take its reciprocal.
+\item Smoothness evaluation function. This evaluation function sums the difference between each pair of adjacent tiles. Again, smaller is better so we take its reciprocal.
+
+\end{enumerate}
+
+We use a similar version of the expectimax algorithm as the one presented in lecture. If the current agent is the human, we take the action that produces the maximum score from the recursion tree. If the current agent is the computer, we randomly pick one action (to be more specific, an unoccupied cell location).
+
+\begin{table}[!htbp]
 
 \centering
 
@@ -116,7 +169,7 @@ Standard Deviation & 2956.264 \\ \hline
 
 \end{table}
 
-\begin{table}[]
+\begin{table}[!htbp]
 
 \centering
 
@@ -132,8 +185,9 @@ Standard Deviation & 3250.412 \\ \hline
 \caption{Expectimax Agent with depth 2 and game score evaluation function}
 
 \end{table}
+Next, we use a similar version of the minimax algorithm as the one presented in lecture. If the current agent is the human, we take the action that produces the maximum score from the recursion tree. If the current agent is the computer, we take the action (considering all possible insertions of new tiles) with the minimum score in the recursion tree.
 
-\begin{table}[]
+\begin{table}[!htbp]
 
 \centering
 
@@ -150,7 +204,9 @@ Standard Deviation & 5279.458 \\ \hline
 
 \end{table}
 
-\begin{table}[]
+We use a similar version of the alpha beta pruning algorithm as the one presented in lecture. If the current agent is the human, we take the action that produces the maximum score from the recursion tree. However, if at any point as we loop through all the actions, the beta value is smaller or equal to the alpha value, we can terminate and return the maximum action so far. If the current agent is the computer, we take the action (considering all possible insertions of new tiles) with the minimum score in the recursion tree. Similarly, if at any point as we loop through all the actions the beta value is smaller or equal to the alpha value, we can terminate and return the minimum action so far. 
+
+\begin{table}[!htbp]
 
 \centering
 
@@ -167,7 +223,9 @@ Standard Deviation & 4782.109 \\ \hline
 
 \end{table}
 
-\begin{table}[]
+The best approach we tried, which obtained the maximum score, was using the snake evaluation function with expectimax with a search depth of 3.
+
+\begin{table}[!htbp]
 
 \centering
 
@@ -184,15 +242,89 @@ Standard Deviation & 48849.40651 \\ \hline
 
 \end{table}
 
+\subsection{Reflex Strategies}
+
+However, as mentioned above, the computation required for a depth of 3 is quite high, taking up to one second for each move. Therefore, as summarized above, we used training data from the expectimax agent’s moves to train various reflex models in Theano and Torch. We had a total of over 20,000 data points (consisting of a input in $R^{16}$ and a move label corresponding to left, up, right, down). 
+
+We first implemented and trained a multi-class logistic regression model in Theano. In essence, we trained four logistic regressions (one for each move) with the entire dataset, corresponding to labels of 0 or 1 depending on whether the move was recommended or not. During prediction, we simply fed the board state into each model and went with the move with the highest expected “probability,” or the next highest scoring move if the top move was invalid. 
+
+\begin{table}[!htbp]
+
+\centering
+
+\begin{tabular}{|l|l|}
+\hline
+Mininum Score      & 320 \\ \hline
+Maximum Score      & 400 \\ \hline
+Mean Score         & 375.2 \\ \hline
+Median Score       & 382 \\ \hline
+Standard Deviation & 23.61 \\ \hline
+\end{tabular}
+
+\caption{Logistic regression classifier with no feature transform (raw tile value features)}
+
+\end{table}
+
+As demonstrated by the poor scores (even worse than random!), even with validation during training, the practical test error rate was very high. 
+
+The same technique was tried, but using the softmax function $\sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \text{ for } j = 1, \dots, K$, yielding similar results. 
+
+Noticing that the inputs (tiles on the game board) were all powers of two, we considered applying a simple feature transformation: taking the base-2 logarithms of all features. However, this actually worsened the prediction results:
+
+\begin{table}[!htbp]
+
+\centering
+
+\begin{tabular}{|l|l|}
+\hline
+Mininum Score      & 268 \\ \hline
+Maximum Score      & 272 \\ \hline
+Mean Score         & 270.4 \\ \hline
+Median Score       & 270.4 \\ \hline
+Standard Deviation & 23.61 \\ \hline
+\end{tabular}
+
+\caption{Logistic regression classifier with feature transform (raw tile value features)}
+
+\end{table}
+
+Specifically, with a single-layer multi-class classifier using logistic regression, using the feature transform resulted in the predicted moves to always be “up”—again, likely a result of dataset bias as well as nonlinearity. 
+
+The above results are obviously very poor, but make sense given the hypothesized nonlinearity of the problem. Therefore, we next constructed various neural network models using Torch with the same 16 inputs and 4 outputs, but an additional layer with a variable number of neurons. As with before, sigmoids were used in the first transformation and a softmax for the outputs. However, for all models, regardless of the size of the hidden layer, the model again failed to generalize and outputted similar prediction results as above. 
+
+\subsection{Reinforcement Learning Strategies}
+
 \section{Literature Review}
 
-\section{Error Analysis}
+\section{Error Analysis and Future Works}
 
-\section{Future Works}
+\subsection{Evaluation functions}
+
+Though the goal of this project was not to find the ideal evaluation function for 2048, we saw how critical a good evaluation function was to yielding good performance. In this project, we experimented with several different evaluation functions for the expectimax agent, and the “snake” evaluation function was able to give us the best success. 
+
+However, we do believe that the monotonicity, smoothness, empty tiles, and the raw score evaluation functions can be beneficial. Though we tried using a weighted combination of all five evaluation functions, with the hyperparameters we tried, the variance in total scores was greatly increased and the mean score was only sometimes marginally increased. However, to better tune the evaluation function, in the future, we can potentially better tune these hyperparameters for a combined evaluation function using a “parameter sweep” methodology. Additionally, we can explore other evaluation functions based on deeper domain knowledge.
+
+\subsection{Machine learning}
+
+The performance of the reflex agents was far below expected. We can see several areas for improvement: 
+
+\begin{enumerate}[1)]
+
+\item The dataset used to train the reflex agents was likely very biased. Specifically, we used several playthroughs of 2048 using the expectimax agent, saving every single board state and its corresponding recommended move. However, later in the game, larger-valued tiles or tiles which are “locked in” tend to stay in the same position for hundreds of moves. For instance, considering that the evaluation function tends to put the largest tile in the top left square, there tend to be two times as many data points containing a largest tile of value n than data points containing a largest tile of value $\frac{n}{2}$. Therefore, we hypothesize that such tiles repeatedly used in the training set failed to allow the reflex models to generalize. This was especially true in practice, since the vast majority of data points were from late in the game, while the reflex agent always failed early on. 
+
+\item Our models also likely had high bias. As demonstrated by our results, the process of picking moves in 2048 is clearly nonlinear, which explains the failure of single-layer models to generalize the move-making process. Furthermore, data from the expectimax agent with depth 3 likely had much deeper “strategy” than could be modelled by such small networks. (For instance, our team members noticed many signs of deeper “thinking” in the depth 3 agent as compared to even the depth 2 agent.) Therefore, to address the failure of our neural networks with one hidden layer to generalize the move-making process, we could look into larger and more advanced models, as well as explore different techniques. 
+
+\item Rather than simply unrolling the board into a vector in $R^{16}$ and expecting our models to learn the underlying patterns to the moves, we could try using more descriptive features as inputs. For instance, we could take inspiration from our monotonicity, smoothness, and num-empty evaluation functions and use those as features to give our models more insight into the actual game state, rather than simply giving the raw tile values.
+
+\item Instead of deterministically choosing the move with the highest output, we could easily implement an agent to randomly pick a move weighted by the outputs. This would be a simple way to avoid the problem of the models repeatedly picking the same move deterministically.
+
+\end{enumerate}
 
 \begin{thebibliography}{9}
 
 \bibitem{1} \texttt{https://github.com/ov3y/2048-AI}
+
+\bibitem{2} \texttt{https://en.wikipedia.org/wiki/Softmax\_function}
 
 \end{thebibliography}
 
