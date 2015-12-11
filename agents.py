@@ -1,5 +1,8 @@
 import random
 import eval
+import reflex
+import util
+import numpy
 
 class RandomAgent():
     def __init__(self):
@@ -119,3 +122,25 @@ class AlphaBetaAgent():
 
         utility, rand, action = recurse(gameState, index, self.depth, float('-inf'), float('inf'))
         return action
+
+class LogisticAgent():
+    def __init__(self):
+        self.predict = reflex.train()
+
+    def getAction(self, gameState, index, validActions):
+        if gameState.isLose():
+            return None
+        actions = gameState.getLegalActions(index, validActions)
+        if index == 0: # human player
+            unrolled = util.unroll_board(gameState.board)
+            x = numpy.asarray(unrolled)
+            x = x.reshape(1, x.shape[0])
+            predictions = [(self.predict[move](x), move) for move in range(4)]
+            predictions.sort(reverse=True)
+            if predictions[0][1] in validActions:
+                return predictions[0][1]
+            else:
+                print('Falling back to second choice since {} was last moved'.format(predictions[0][1]))
+                return predictions[1][1]
+        else:
+            return None if len(actions) == 0 else random.choice(actions)
