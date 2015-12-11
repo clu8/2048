@@ -1,5 +1,6 @@
 import gameState
 import agents
+import eval
 import data
 
 def run(board, score):
@@ -53,7 +54,7 @@ def simulate(num_games=1, save_to_csv=False, verbose=False):
         return results
 
     move = gameState.Move()
-    agent = agents.ExpectimaxAgent(2)
+    agent = agents.ExpectimaxAgent(3)
     validActions = move.getAllMoves()
 
     if save_to_csv:

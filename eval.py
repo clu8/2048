@@ -55,4 +55,4 @@ def eval_snake(state):
     return util.dot_product(SNAKE_WEIGHTS, util.unroll_board(state.board))
 
 def eval_snake_and_empty(state):
-    return eval_snake(state.board) + 2 ** eval_numempty(state.board)
+    return eval_snake(state) + 2 ** eval_numempty(state)
