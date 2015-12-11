@@ -6,11 +6,11 @@ We store data in CSV files with 17 columns - 16 for the board state and 1 for th
 import util
 import csv
 
-DATA_FILE_PATH = 'data/all_data.csv'
+DATA_FILE_PATH = 'data/expectimax_depth3_moves.csv'
 
 class MoveWriter(object):
     def __enter__(self, file_path=DATA_FILE_PATH):
-        self.f = open(file_path, 'wa')
+        self.f = open(file_path, 'a')
         self.writer = csv.writer(self.f)
         return self
 

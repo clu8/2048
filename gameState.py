@@ -1,5 +1,4 @@
 ﻿import random
-import agents
 
 class Move:
     up, right, down, left = list(range(4))
@@ -185,3 +184,4 @@ def simulate(num_games=1, verbose=False):
 
 if __name__ == '__main__':
     print(simulate(5, True))
+#   print '\nScore', newState.score

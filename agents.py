@@ -1,9 +1,53 @@
 import random
 import eval
 
-class ExpectimaxAgent():
+class RandomAgent():
 	def __init__(self):
-		self.depth = 2
+		pass
+
+	def getAction(self, gameState, index, validActions):
+		actions = gameState.getLegalActions(index, validActions)
+		return None if len(actions) == 0 else random.choice(actions)
+
+class UpDownAgent():
+	def __init__(self):
+		self.upMove, self.downMove = 0, 2
+		self.lastMove = self.upMove
+
+	def getAction(self, gameState, index, validActions):
+		if gameState.isLose():
+			return None
+		if index == 0: # human player
+			if self.lastMove == self.upMove:
+				self.lastMove = self.downMove
+			else:
+				self.lastMove = self.upMove
+			return self.lastMove
+		else:
+			actions = gameState.getLegalActions(index, validActions)
+			return None if len(actions) == 0 else random.choice(actions)
+
+class UpLeftAgent():
+	def __init__(self):
+		self.upMove, self.leftMove = 0, 3
+		self.lastMove = self.upMove
+
+	def getAction(self, gameState, index, validActions):
+		if gameState.isLose():
+			return None
+		if index == 0: # human player
+			if self.lastMove == self.upMove:
+				self.lastMove = self.leftMove
+			else:
+				self.lastMove = self.upMove
+			return self.lastMove
+		else:
+			actions = gameState.getLegalActions(index, validActions)
+			return None if len(actions) == 0 else random.choice(actions)
+
+class ExpectimaxAgent():
+	def __init__(self, depth=2):
+		self.depth = depth
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_snake(gameState.board)
@@ -25,11 +69,11 @@ class ExpectimaxAgent():
 
 	def getComputerAction(self, gameState, validActions):
 		actions = gameState.getLegalActions(1, validActions)
-		return random.choice(actions) if len(actions) > 0 else None
+		return None if len(actions) == 0 else random.choice(actions)
 
 class MinimaxAgent():
-	def __init__(self):
-		self.depth = 3
+	def __init__(self, depth=3):
+		self.depth = depth
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_snake(gameState.board)
@@ -50,8 +94,8 @@ class MinimaxAgent():
 		return action
 
 class AlphaBetaAgent():
-	def __init__(self):
-		self.depth = 3
+	def __init__(self, depth=3):
+		self.depth = depth
 
 	def evaluationFunction(self, gameState):
 		return eval.eval_monotonicity(gameState.board)
