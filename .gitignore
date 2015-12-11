@@ -64,3 +64,6 @@ proposal.synctex.gz
 
 # sftp set up
 sftp-config.json
+
+# qlearning training data
+/qlearning

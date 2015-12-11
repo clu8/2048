@@ -1,4 +1,5 @@
-﻿import random
+import random
+import agents
 
 class Move:
     up, right, down, left = list(range(4))
@@ -164,16 +165,17 @@ def simulate(num_games=1, verbose=False):
         while True:
             num_moves += 1
 
-            computerAction = agent.getComputerAction(gameState, None)
+            computerAction = agent.getAction(gameState, 1, None)
             if computerAction is None:
                 break
             gameState = gameState.generateSuccessor(1, computerAction)
 
+            if verbose:
+                print(gameState)
             humanAction = move.getAllMoves()[int(raw_input())]
             if humanAction is None:
                 break
-            if verbose:
-                print(gameState)
+            else:
                 print('Agent move: {}\n'.format(move.moveString(humanAction)))
             gameState = gameState.generateSuccessor(0, humanAction)
 
@@ -184,4 +186,3 @@ def simulate(num_games=1, verbose=False):
 
 if __name__ == '__main__':
     print(simulate(5, True))
-#   print '\nScore', newState.score

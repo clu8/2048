@@ -1,5 +1,6 @@
 import gameState
 import agents
+import eval
 import data
 
 def run(board, score):
@@ -98,5 +99,5 @@ def compare_depth():
         game = game.generateSuccessor(0, depth3Action)
 
 if __name__ == '__main__':
-    print(simulate(1, True, False))
+    print(simulate(1, True, True))
     # compare_depth()
