@@ -7,8 +7,8 @@ Applying Varied Artificial Intelligence Techniques to Play 2048
 
 To run the front end:
 
-1. Install Flask using "pip install Flask"
-2. In the main directory, run "python app.py", then go to localhost:5000
+1. Install Flask using `pip install Flask`
+2. In the main directory, run `python app.py`, then navigate to `localhost:5000`
 
 Files
 -----
