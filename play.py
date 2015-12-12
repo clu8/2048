@@ -23,7 +23,7 @@ def run(board, score):
 def simulate(num_games=1, save_to_csv=False, verbose=False):
     '''
     Returns list of (score, num_moves) tuples.
-    If save_to_csv is set to True, it saves each board state and the recommended move using MoveWriter. 
+    If save_to_csv is set to True, it saves each board state and the recommended move using MoveWriter.
     '''
     def go(mw=None):
         results = []
@@ -56,7 +56,7 @@ def simulate(num_games=1, save_to_csv=False, verbose=False):
         return results
 
     move = gameState.Move()
-    agent = agents.LogisticAgent(False)
+    agent = agents.ExpectimaxAgent(2)
     validActions = move.getAllMoves()
 
     if save_to_csv:
@@ -67,8 +67,8 @@ def simulate(num_games=1, save_to_csv=False, verbose=False):
 
 def compare_depth():
     '''
-    Plays a game using 2 expectimax agents - one of depth 2 and one of depth 3. 
-    Counts the number of moves where their move choices differ. 
+    Plays a game using 2 expectimax agents - one of depth 2 and one of depth 3.
+    Counts the number of moves where their move choices differ.
     '''
     move = gameState.Move()
     agent2 = agents.ExpectimaxAgent(2)
@@ -101,5 +101,5 @@ def compare_depth():
         game = game.generateSuccessor(0, depth3Action)
 
 if __name__ == '__main__':
-    print(simulate(10, False, True))
+    print(simulate(1, False, False))
     # compare_depth()
