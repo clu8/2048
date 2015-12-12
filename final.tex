@@ -59,6 +59,10 @@ Therefore, we next attempted to use the “optimal” moves suggested by the exp
 
 Finally, we approached the game with a reinforcement learning strategy using Q-learning, which has not previously been applied to playing 2048 in a publication. Inspired by DeepMind's deep Q-learning strategy for playing Atari games,[1] we applied a similar approach to tackle the 2048 puzzle, using Q-learning with a neural network. This strategy has the advantage of being model-free, and thus needing no prior knowledge of the game.
 
+\section{Literature Review}
+
+One of the most widely known 2048 AIs was published by Matt Overlan, who used an algorithm with “iterative deepening depth-first alpha-beta search.[7] The evaluation function tries to keep the rows and columns monotonic (either all decreasing or increasing) while aligning same-valued tiles and minimizing the number of tiles on the grid.
+
 \section{Infrastructure}
 
 The primary infrastructure for modeling the game state and logic and implementing the AI agents was implemented in Python. For a more human-friendly user interface, we also built a front end web interface to play the game and visualize the AI agents' moves. We forked the original 2048 repository by Gabriele Cirulli and added our custom Javascript functions which communicate with a lightweight Python server which computes the optimal move. The setup used Flask,[2] an open source Python web framework. We wrote a JavaScript function that serializes the current board as a string and passes it to the Flask server via an AJAX request. The server computes the optimal move using a specified approach, and returns a response back to the front end. Then, a callback JavaScript function updates the board using the optimal move.
@@ -200,7 +204,7 @@ Mininum Score      & 81900 \\ \hline
 Maximum Score      & 172426 \\ \hline
 Mean Score         & 137770 \\ \hline
 Median Score       & 158984 \\ \hline
-Standard Deviation & 48849.40651 \\ \hline
+Standard Deviation & 48849.407 \\ \hline
 \end{tabular}
 
 \caption{Expectimax Agent with depth 3 and snake evaluation function}
@@ -301,12 +305,9 @@ The above results are obviously very poor, but make sense given the hypothesized
 
 \subsection{Reinforcement Learning Strategies}
 
-For the deep Q-learning strategy, our goal was to obtain an agent that maximizes the accumulative future reward. This feature is described by optimal Q-value
-$$Q^*(s, a) = \max_{\pi} \mathbb{E} [r_t + \gamma r_{t + 1} + \gamma r_{t + 2} + \dots | s_t = s, a_t = a, \pi]$$
-which describes the maximum sum of rewards discounted by $\gamma$ at future steps t, achieved by a policy $\pi(s|a)$ after making an observation ($s$) and making an action ($a$). The Q-value (action-value) contains all pertinent information about the playing field along with a possible action. The Q-function (utility function) is used to describe how well our Q values approximates the actual game utilities:
-$\hat Q_{\text{opt}(s, a)} \leftarrow (1-\eta) \underbrace{\hat Q_{\text{opt}(s, a)}}_\text{prediction} + \eta \underbrace{(r + \gamma \hat V_{\text{opt}(s')})}_\text{target}]$
+For the deep Q-learning strategy, our goal was to obtain an agent that maximizes the accumulative future reward. This feature is described by optimal Q-value $$Q^*(s, a) = \max_{\pi} \mathbb{E} [r_t + \gamma r_{t + 1} + \gamma r_{t + 2} + \dots | s_t = s, a_t = a, \pi]$$ which describes the maximum sum of rewards discounted by $\gamma$ at future steps t, achieved by a policy $\pi(s|a)$ after making an observation ($s$) and making an action ($a$). The Q-value (action-value) contains all pertinent information about the playing field along with a possible action. The Q-function (utility function) is used to describe how well our Q values approximates the actual game utilities: $$\hat Q_{\text{opt}(s, a)} \leftarrow (1-\eta) \underbrace{\hat Q_{\text{opt}(s, a)}}_\text{prediction} + \eta \underbrace{(r + \gamma \hat V_{\text{opt}(s')})}_\text{target}]$$
 
-In the Q-learning algorithm, action utilities are evaluated based on immediate reward gained from taking actions, with the possibility of a delayed reward led to by the action. Due to the large state space of 2048 puzzle ($O(12^n)$), our data cannot possibly exploit all the possibilities. Thus we use a Q-value outputted by neural network:
+In the Q-learning algorithm, action utilities are evaluated based on immediate reward gained from taking actions, with the possibility of a delayed reward led to by the action. Due to the large state space of 2048 puzzle, our data cannot possibly exploit all the possibilities. Thus we use a Q-value outputted by neural network:
 
 \begin{centering}
 
@@ -314,7 +315,7 @@ In the Q-learning algorithm, action utilities are evaluated based on immediate r
 
 \end{centering}
 
-By linking our trainer with reinforcement learning code using \texttt{popen()}, \texttt{write()}, and \texttt{read()} in Python, we apply real-time reinforcement learning to our game playing. Every time a game state is generated, we feed it into our Q-Learning \texttt{Brain} object, and the \texttt{Brain} then outputs the optimal move for the game. Then a reward is calculated based on the move, and provided back to the \textt{Brain} as feedback.
+By linking our trainer with reinforcement learning code using \texttt{popen()}, \texttt{write()}, and \texttt{read()} in Python, we apply real-time reinforcement learning to our game playing. Every time a game state is generated, we feed it into our Q-Learning \texttt{Brain} object, and the \texttt{Brain} then outputs the optimal move for the game. Then a reward is calculated based on the move, and provided back to the \texttt{Brain} as feedback.
 
 \begin{centering}
 
@@ -366,10 +367,6 @@ The performance of reinforcement learning stabilizes at an average of 1200 point
 
 \end{centering}
 
-\section{Literature Review}
-
-One of the most widely known 2048 AIs was published by Matt Overlan, who used an algorithm with “iterative deepening depth-first alpha-beta search.[7] The evaluation function tries to keep the rows and columns monotonic (either all decreasing or increasing) while aligning same-valued tiles and minimizing the number of tiles on the grid.
-
 \section{Error Analysis and Future Works}
 
 \subsection{Evaluation functions}
@@ -408,7 +405,7 @@ For possible future work, we think that better reward function should be invente
 
 \bibitem{2} \texttt{http://flask.pocoo.org/}
 
-\bibitem{3} Hadi Pouransari & Saman Ghili. "AI algorithms for the game 2048".
+\bibitem{3} Hadi Pouransari and Saman Ghili. "AI algorithms for the game 2048".
 
 \bibitem{4} \texttt{http://torch.ch/}
 
