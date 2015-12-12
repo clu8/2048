@@ -1,10 +1,18 @@
 Applying Varied Artificial Intelligence Techniques to Play 2048
-============
+====
 
 **Zhiyang He, Charles Lu, Stephen Ou**
 
 *CS 221 at Stanford University with Percy Liang, Autumn 2015*
 
+We explore various techniques to play 2048: 
+1. Randomized and pure strategies
+2. Search strategies, i.e. expectimax and minimax
+3. Reflex strategies, i.e. regression and neural networks
+4. Reinforcement strategies, i.e. Q-learning
+
+Setup
+----
 To run the front end:
 
 1. Install Flask using `pip install Flask`
@@ -12,7 +20,6 @@ To run the front end:
 
 Files
 -----
-
 * `gameState.py`: provides an abstraction for the 2048 game
 * `agents.py`: contains logic behind each of our AI agents
 * `play.py`: backend only simulation entry point
