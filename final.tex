@@ -72,7 +72,7 @@ In order to maximize the game score of 2048, we first built six agents, three of
 
 For the expectimax, minimax, and alpha-beta pruning agents, which require a way to score the current game state, we experimented with a number of evaluation functions. Though the purpose of this project was not to find the ideal evaluation function or tune perfect hyperparameters for our evaluation functions, the best evaluation function we used with the expectimax agent (with a depth of 3) had a win rate of 100 percent (getting to 2048 on every game).
 
-Though the expectimax agent yielded very good results, the main disadvantage of using it was its computation time. With a branching factor of up to 4 for the player’s move and up to 16 for the computer’s move (placing an empty tile), it is quite infeasible to search the game tree to a large depth without pruning. Specifically, on a modern laptop, it took the expectimax agent with depth 3 almost a second per move.
+Though the expectimax agent yielded very good results, the main disadvantage of using it was its computation time. With a branching factor of up to 4 for the player's move and up to 16 for the computer's move (placing an empty tile), it is quite infeasible to search the game tree to a large depth without pruning. Specifically, on a modern laptop, it took the expectimax agent with depth 3 almost a second per move.
 
 Therefore, we next attempted to use the “optimal” moves suggested by the expectimax agent to train various reflex models using different machine learning techniques. Specifically, to generate the training, validation, and test datasets, we simply ran multiple playthroughs of 2048 using the search agent, and saved each game board state and the corresponding recommended move as a single data point.
 
@@ -153,7 +153,7 @@ Standard Deviation & 261.353 \\ \hline
 
 \subsection{Search Strategies}
 
-We then implemented more advanced strategies which traverse the game tree using expectimax, minimax, and minimax with alpha-beta pruning. In the normal game of 2048, the computer move (where the new tile is inserted) is randomized, so technically only the expectimax strategy makes sense in that environment. However, we wanted to experiment with minimax strategy as well to see how the score differs if the AI agent assumes that the computer aims to minimize the player’s score when inserting a new tile.
+We then implemented more advanced strategies which traverse the game tree using expectimax, minimax, and minimax with alpha-beta pruning. In the normal game of 2048, the computer move (where the new tile is inserted) is randomized, so technically only the expectimax strategy makes sense in that environment. However, we wanted to experiment with minimax strategy as well to see how the score differs if the AI agent assumes that the computer aims to minimize the player's score when inserting a new tile.
 
 Because of the number of path to explore in the game state is huge, our initial experimentation used a depth of 2. In addition to simply using the game score, we implemented several evaluation functions to provide an accurate estimate of how “good” a game board is:
 
@@ -270,7 +270,7 @@ Standard Deviation & 4782.109 \\ \hline
 
 \subsection{Reflex Strategies}
 
-However, as mentioned above, the computation required for a depth of 3 is quite high, taking up to one second for each move. Therefore, as summarized above, we used training data from the expectimax agent’s moves to train various reflex models in Theano and Torch. We had a total of over 20,000 data points (consisting of a input in $\mathbb{R}^{16}$ and a move label corresponding to left, up, right, down).
+However, as mentioned above, the computation required for a depth of 3 is quite high, taking up to one second for each move. Therefore, as summarized above, we used training data from the expectimax agent's moves to train various reflex models in Theano and Torch. We had a total of over 20,000 data points (consisting of a input in $\mathbb{R}^{16}$ and a move label corresponding to left, up, right, down).
 
 We first implemented and trained a multi-class logistic regression model in Theano. In essence, we trained four logistic regressions (one for each move) with the entire dataset, corresponding to labels of 0 or 1 depending on whether the move was recommended or not. During prediction, we simply fed the board state into each model and went with the move with the highest expected “probability,” or the next highest scoring move if the top move was invalid.
 
