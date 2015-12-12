@@ -7,7 +7,16 @@
 \setlength{\columnsep}{1cm}
 \everymath{\displaystyle}
 
-\title{CS 221 Project Report \\ Applying Varied Artificial Intelligence Techniques to Play 2048}
+\usepackage{titling}
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+
+\title{Applying Varied Artificial Intelligence Techniques to Play 2048}
+\subtitle{CS 221 Project Report}
 \author{Zhiyang He, Charles Lu, Stephen Ou \\ \texttt{\{hzyjerry,clu8,sdou\}@stanford.edu}}
 \date{December 11th, 2015}
 
@@ -20,6 +29,8 @@
 Released in 2014, the single-player puzzle game 2048 quickly became a worldwide sensation: in addition to hijacking classrooms and quickly occupying people's phone screens, it also spawned countless spin-offs, strategy guides, and self-professed gurus. Meanwhile, the game offers a good platform to experiment and compare both traditional and cutting edge artificial intelligence techniques.
 
 2048 is played on a 4 by 4 grid. Every turn, a random tile with a value 2 or 4 will appear on an empty cell. Then the player can choose to slide left, right, up, or down. All the tiles will slide all the way towards that direction. If any two tiles collide and have the same value, they will merge into one tile, with a new value being the sum of the two old tiles. Additionally, when two tiles collide, the score will be incremented by the value of the newly merged title. There are two ways to end the game. If the value of one tile reaches 2048, the game is considered a win (though the player can continue playing). Otherwise, if all the cells on the grid are occupied with mismatched tiles and no move is possible, the game is lost.
+
+\includegraphics[width=90mm]{2048_screenshot2.jpg}
 
 \section{Literature Review}
 
@@ -307,7 +318,7 @@ Specifically, with a single-layer multi-class classifier using logistic regressi
 
 The above results are obviously very poor, but make sense given the hypothesized nonlinearity of the problem. Therefore, we next constructed various neural network models using Torch [7] with the same 16 inputs and 4 outputs, but an additional layer with a variable number of neurons. As with before, sigmoids were used in the first transformation and a softmax for the outputs. However, for all models, regardless of the size of the hidden layer, the model again failed to generalize and outputted similar prediction results as above.
 
-\subsection{Reinforcement Learning Strategies}
+\subsection{Reinforcement Strategies}
 
 For the deep Q-learning strategy, our goal was to obtain an agent that maximizes the accumulative future reward. This feature is described by optimal Q-value $$Q^*(s, a) = \max_{\pi} \mathbb{E} [r_t + \gamma r_{t + 1} + \gamma r_{t + 2} + \dots | s_t = s, a_t = a, \pi]$$ which describes the maximum sum of rewards discounted by $\gamma$ at future steps t, achieved by a policy $\pi(s|a)$ after making an observation ($s$) and making an action ($a$). The Q-value (action-value) contains all pertinent information about the playing field along with a possible action. The Q-function (utility function) is used to describe how well our Q values approximates the actual game utilities: $$\hat Q_{\text{opt}(s, a)} \leftarrow (1-\eta) \underbrace{\hat Q_{\text{opt}(s, a)}}_\text{prediction} + \eta \underbrace{(r + \gamma \hat V_{\text{opt}(s')})}_\text{target}]$$
 
@@ -373,13 +384,13 @@ The performance of reinforcement learning stabilizes at an average of 1200 point
 
 \section{Error Analysis and Future Works}
 
-\subsection{Evaluation functions}
+\subsection{Evaluation Functions}
 
 Though the goal of this project was not to find the ideal evaluation function for 2048, we saw how critical a good evaluation function was to yielding good performance. In this project, we experimented with several different evaluation functions for the expectimax agent, and the “snake” evaluation function was able to give us the best success.
 
 However, we do believe that the monotonicity, smoothness, empty tiles, and the raw score evaluation functions can be beneficial. Though we tried using a weighted combination of all five evaluation functions, with the hyperparameters we tried, the variance in total scores was greatly increased and the mean score was only sometimes marginally increased. However, to better tune the evaluation function, in the future, we can potentially better tune these hyperparameters for a combined evaluation function using a “parameter sweep” methodology. Additionally, we can explore other evaluation functions based on deeper domain knowledge.
 
-\subsection{Machine learning}
+\subsection{Machine Learning}
 
 The performance of the reflex agents was far worse than expected. We can see several areas for improvement:
 
