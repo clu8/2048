@@ -5,6 +5,8 @@ Applying Varied Artificial Intelligence Techniques to Play 2048
 
 *CS 221 at Stanford University with Percy Liang, Autumn 2015*
 
+Overview
+---
 We explore various techniques to play 2048: 
 
 1. Randomized and pure strategies
