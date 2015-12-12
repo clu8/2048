@@ -308,7 +308,19 @@ We want to obtain an agent that maximizes the accumulative future reward. This f
 
 This value can be computed by using the Q Learning algorithm we learned in class. In Q-learning algorithm, action utilities are evaluated based on immediate reward gained from taking actions, with the possibility of a delayed reward led to by the action. Due to the large state space of 2048 puzzle ($O(12^n)$), our data cannot possibly exploit all the possibilities. Thus we use a Q value based on neural network that covers the unknown states:
 
+\begin{centering}
+
+\includegraphics[width=75mm]{rl_nodes.png}
+
+\end{centering}
+
 By linking our trainer with reinforcement learning code using popen(), write() and read() in python, we apply real-time reinforcement learning to our game playing. Every time a game state is generated, we feed it into our Q-Learning Brain object, the Brain outputs the optimal movement for the game. Then a reward is calculated based on the move, and provided back to the brain as feedback.
+
+\begin{centering}
+
+\includegraphics[width=75mm]{rl_state.png}
+
+\end{centering}
 
 We use a framework based on Torch 7 [5] called DeepQLearning [6] to implement this process. The DeepQLearning framework provides the following Q-Learning interface:
 
@@ -344,9 +356,15 @@ Our reward function is \begin{align*}
 
 Based on former strategies, a randomized agent has average performance of 571 points, with maximum 1456. By applying the reinforcement learning, our agent quickly surpasses this benchmark and begins generating scores up to 800~900 frequently. 
 
-Around 5 minutes after training begins, the agent starts producing grid with 128 in most of the experiments. Around 12~20 minutes after training, an interesting pattern can be observed: the agent starts gathering grids with large numbers and keep them close together.
+Around 5 minutes after training begins, the agent starts producing grid with 128 in most of the experiments. Around 12~20 minutes after training, an interesting pattern can be observed: \textbf{the agent starts gathering grids with large numbers and keep them close together}.
 
 The performance of reinforcement learning stabilizes at average 1200 points (highest 4548) after 2 hours of training.
+
+\begin{centering}
+
+\includegraphics[width=75mm]{rl_graph.jpg}
+
+\end{centering}
 
 \section{Literature Review}
 
