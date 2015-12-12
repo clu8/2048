@@ -21,6 +21,14 @@ Released in 2014, the single-player puzzle game 2048 quickly became a worldwide 
 
 2048 is played on a 4 by 4 grid. Every turn, a random tile with a value 2 or 4 will appear on an empty cell. Then the player can choose to slide left, right, up, or down. All the tiles will slide all the way towards that direction. If any two tiles collide and have the same value, they will merge into one tile, with a new value being the sum of the two old tiles. Additionally, when two tiles collide, the score will be incremented by the value of the newly merged title. There are two ways to end the game. If the value of one tile reaches 2048, the game is considered a win (though the player can continue playing). Otherwise, if all the cells on the grid are occupied with mismatched tiles and no move is possible, the game is lost.
 
+\section{Literature Review}
+
+Since its release, many AIs have been built to play 2048. All implementations we have seen use some form of searching the game tree.
+
+One of the most widely known 2048 AIs was published by Matt Overlan, who used an algorithm with iterative deepening depth-first alpha-beta search.[1] The evaluation function tries to keep the rows and columns monotonic (either all decreasing or increasing) while aligning same-valued tiles and minimizing the number of tiles on the grid.
+
+2048 was also the topic of choice for three projects in 2014's CS 221 class.[2][3][4] All three projects explored only search techniques, e.g. expectimax, and also explored optimization and pruning methods to improve computation time.
+
 \section{Task Definition}
 
 Our goal for this project is to build and investigate a number of models which play to maximize the game score at a reasonable runtime. The input-output behavior is as follows: on each turn, given the state of the 2048 game board (as well as move history when necessary), our models will return one of four moves (left, right, up, down) to attempt to maximize the score.
@@ -57,15 +65,11 @@ Though the expectimax agent yielded very good results, the main disadvantage of 
 
 Therefore, we next attempted to use the “optimal” moves suggested by the expectimax agent to train various reflex models using different machine learning techniques. Specifically, to generate the training, validation, and test datasets, we simply ran multiple playthroughs of 2048 using the search agent, and saved each game board state and the corresponding recommended move as a single data point.
 
-Finally, we approached the game with a reinforcement learning strategy using Q-learning, which has not previously been applied to playing 2048 in a publication. Inspired by DeepMind's deep Q-learning strategy for playing Atari games,[1] we applied a similar approach to tackle the 2048 puzzle, using Q-learning with a neural network. This strategy has the advantage of being model-free, and thus needing no prior knowledge of the game.
-
-\section{Literature Review}
-
-One of the most widely known 2048 AIs was published by Matt Overlan, who used an algorithm with “iterative deepening depth-first alpha-beta search.[7] The evaluation function tries to keep the rows and columns monotonic (either all decreasing or increasing) while aligning same-valued tiles and minimizing the number of tiles on the grid.
+Finally, we approached the game with a reinforcement learning strategy using Q-learning, which has not previously been applied to playing 2048 in a publication. Inspired by DeepMind's deep Q-learning strategy for playing Atari games,[5] we applied a similar approach to tackle the 2048 puzzle, using Q-learning with a neural network. This strategy has the advantage of being model-free, and thus needing no prior knowledge of the game.
 
 \section{Infrastructure}
 
-The primary infrastructure for modeling the game state and logic and implementing the AI agents was implemented in Python. For a more human-friendly user interface, we also built a front end web interface to play the game and visualize the AI agents' moves. We forked the original 2048 repository by Gabriele Cirulli and added our custom Javascript functions which communicate with a lightweight Python server which computes the optimal move. The setup used Flask,[2] an open source Python web framework. We wrote a JavaScript function that serializes the current board as a string and passes it to the Flask server via an AJAX request. The server computes the optimal move using a specified approach, and returns a response back to the front end. Then, a callback JavaScript function updates the board using the optimal move.
+The primary infrastructure for modeling the game state and logic and implementing the AI agents was implemented in Python. For a more human-friendly user interface, we also built a front end web interface to play the game and visualize the AI agents' moves. We forked the original 2048 repository by Gabriele Cirulli and added our custom Javascript functions which communicate with a lightweight Python server which computes the optimal move. The setup used Flask,[6] an open source Python web framework. We wrote a JavaScript function that serializes the current board as a string and passes it to the Flask server via an AJAX request. The server computes the optimal move using a specified approach, and returns a response back to the front end. Then, a callback JavaScript function updates the board using the optimal move.
 
 One problem we ran into while doing simulation is that the HTTP request and overhead of displaying the front end visualization was a bottleneck in terms of speed. While it is interesting to see the game being solved in the real user interface, the speed becomes problematic when we wanted to do a lot of simulation to get abundant results. Therefore, we built a more robust back end simulator which runs the game from the command line. Without involving the front end, the back end-only simulator is able to finish one full game in just a few seconds.
 
@@ -278,7 +282,7 @@ Standard Deviation & 23.61 \\ \hline
 
 As demonstrated by the poor scores (even worse than random!), even with validation during training, the practical test error rate was very high.
 
-The same technique was tried, but using the softmax function $\sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \text{ for } j = 1, \dots, K$ [5], yielding similar results.
+The same technique was tried, but using the softmax function $\sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \text{ for } j = 1, \dots, K$ [8], yielding similar results.
 
 Noticing that the inputs (tiles on the game board) were all powers of two, we considered applying a simple feature transformation: taking the base-2 logarithms of all features. However, this actually worsened the prediction results:
 
@@ -301,7 +305,7 @@ Standard Deviation & 23.61 \\ \hline
 
 Specifically, with a single-layer multi-class classifier using logistic regression, using the feature transform resulted in the predicted moves to always be “up”---again, likely a result of dataset bias as well as nonlinearity.
 
-The above results are obviously very poor, but make sense given the hypothesized nonlinearity of the problem. Therefore, we next constructed various neural network models using Torch [4] with the same 16 inputs and 4 outputs, but an additional layer with a variable number of neurons. As with before, sigmoids were used in the first transformation and a softmax for the outputs. However, for all models, regardless of the size of the hidden layer, the model again failed to generalize and outputted similar prediction results as above.
+The above results are obviously very poor, but make sense given the hypothesized nonlinearity of the problem. Therefore, we next constructed various neural network models using Torch [7] with the same 16 inputs and 4 outputs, but an additional layer with a variable number of neurons. As with before, sigmoids were used in the first transformation and a softmax for the outputs. However, for all models, regardless of the size of the hidden layer, the model again failed to generalize and outputted similar prediction results as above.
 
 \subsection{Reinforcement Learning Strategies}
 
@@ -323,7 +327,7 @@ By linking our trainer with reinforcement learning code using \texttt{popen()}, 
 
 \end{centering}
 
-We use a framework based on Torch 7 called DeepQLearning [6] to implement this process. The DeepQLearning framework provides the following Q-learning interface:
+We use a framework based on Torch 7 called DeepQLearning [9] to implement this process. The DeepQLearning framework provides the following Q-learning interface:
 
 \begin{itemize}
 
@@ -401,19 +405,24 @@ For possible future work, we think that better reward function should be invente
 
 \begin{thebibliography}{9}
 
-\bibitem{1} \texttt{http://www.nature.com/nature/journal/v518/n7540/\\full/nature14236.html}
+\bibitem{1} \texttt{https://github.com/ov3y/2048-AI}
 
-\bibitem{2} \texttt{http://flask.pocoo.org/}
+\bibitem{2} Jason Lewis, Alec Powell, Jai Sajnani. "2048: An AI Agent".
 
 \bibitem{3} Hadi Pouransari and Saman Ghili. "AI algorithms for the game 2048".
 
-\bibitem{4} \texttt{http://torch.ch/}
+\bibitem{4} Prithvi Ramakrishnan. "Solving 2048".
 
-\bibitem{5} \texttt{https://en.wikipedia.org/wiki/Softmax\_function}
+\bibitem{5} \texttt{http://www.nature.com/nature/journal/v518/n7540/\\full/nature14236.html}
 
-\bibitem{6} \texttt{https://github.com/blakeMilner/DeepQLearning}
+\bibitem{6} \texttt{http://flask.pocoo.org/}
 
-\bibitem{7} \texttt{https://github.com/ov3y/2048-AI}
+\bibitem{7} \texttt{http://torch.ch/}
+
+\bibitem{8} \texttt{https://en.wikipedia.org/wiki/Softmax\_function}
+
+\bibitem{9} \texttt{https://github.com/blakeMilner/DeepQLearning}
+
 
 \end{thebibliography}
 
