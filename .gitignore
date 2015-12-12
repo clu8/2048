@@ -57,10 +57,10 @@ docs/_build/
 target/
 
 # LaTeX stuff
-proposal.fdb_latexmk
-proposal.aux
-proposal.log
-proposal.synctex.gz
+*.fdb_latexmk
+*.aux
+*.log
+*.synctex.gz
 
 # sftp set up
 sftp-config.json
