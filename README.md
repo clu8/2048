@@ -20,6 +20,7 @@ Files
 * `data.py`: methods to read and write raw board and move label data for reflex model training
 * `tests.py`: unit tests for the 2048 game state and evaluation functions
 * `util.py`: miscellanous utility functions
+* `reflex.py`: Theano script to train various reflex models
 * `appQ.py`: Flask server used to connect Q-learning agents
 * `gameStateQ.lua`: the Lua training script that `appQ.py` connects
 * `gameStateQ.py`: backend-only Q-learning, does the same thing as appQ.py without frontend
