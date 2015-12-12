@@ -14,6 +14,8 @@ ind = 0
 p = Popen(['th', 'gameStateQ.lua'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 score_record = []
 max_score = 0
+ave_score = 550
+max_grid = 0
 
 ## Q Learning Server
 
@@ -28,32 +30,47 @@ def move():
 	global f
 	global score_record
 	global max_score
+	global ave_score
+	global max_grid
 	layout = json.loads(request.args.get('layout'))
 
 	### Book keeping of score
 	new_score = layout["score"]
+	new_max_grid = getMaxGrid(layout["grid"])
+	"""
 	if new_score > max_score:
 		max_score = new_score
-	score_record.append(new_score)
-	if len(score_record) == 10240:
+	"""
+	if len(score_record) == 16:
 		f = open('qlearning/trainingRecord.csv', 'a')
-		f.write(str((float(sum(score_record))/(len(score_record)))) + "\n")
+		ave_score = float(sum(score_record))/(len(score_record))
+		f.write(str(ave_score) + "\n")
 		f.close()
 		score_record = []
 	new_won = layout["won"]
 	reward = 0
+	print "record length", len(score_record) 
+	
+	reward = new_max_grid
 	if new_won:
-		reward = 100000
+		reward += 100000000
+	if new_max_grid > max_grid:
+		max_grid = new_max_grid
+		reward += 100000000
 	if (new_score < last_score):
-		print "record", new_score
+		score_record.append(last_score)
 		# f.write(str(last_score) + "\n")
 		if not new_won:
-			reward = -10000
+			reward = -ave_score
+			# reward = -100000
+	"""
 	else:
 		if not new_won:
-			reward = new_score - last_score
+			# reward = (new_score - last_score)**2
+			reward = new_score
 		if reward == 0:
 			reward = -50
+	"""
 	last_score = layout["score"]
 	
 	### Input to lua process
@@ -81,6 +98,13 @@ def gridToStr(layout, reward):
 			gridStr += str(num) + " "
 	return gridStr + str(reward) + " " +  str(max_score) + " \n"
 
+def getMaxGrid(layout):
+	maxGrid = 0
+	for row in layout:
+		for grid in row:
+			if grid > maxGrid:
+				maxGrid = grid
+	return maxGrid
 
 if __name__ == "__main__":
     app.run(debug=True)

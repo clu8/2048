@@ -56,18 +56,18 @@ end
 
 function Brain.init(num_states, num_actions)
    -- Number of past state/action pairs input to the network. 0 = agent lives in-the-moment :)
-   Brain.temporal_window = 2  
+   Brain.temporal_window = 0
    -- Maximum number of experiences that we will save for training
-   Brain.experience_size = 10000   
+   Brain.experience_size = 10000
    -- experience necessary to start learning
-   Brain.start_learn_threshold = 300
+   Brain.start_learn_threshold = 0
    -- gamma is a crucial parameter that controls how much plan-ahead the agent does. In [0,1]
    -- Determines the amount of weight placed on the utility of the state resulting from an action.
    Brain.gamma = 0.99;
    -- number of steps we will learn for
    Brain.learning_steps_total = 100000
    -- how many steps of the above to perform only random actions (in the beginning)?
-   Brain.learning_steps_burnin = 300;
+   Brain.learning_steps_burnin = 2000;
    -- controls exploration exploitation tradeoff. Will decay over time
    -- a higher epsilon means we are more likely to choose random actions
    Brain.epsilon = 1.0

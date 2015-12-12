@@ -37,13 +37,15 @@ def simulate(num_games=1, save_to_csv=False, verbose=False):
                 if computerAction is None:
                     break
                 game = game.generateSuccessor(1, computerAction)
+                print "computer"
+                print(game)
 
                 humanAction = agent.getAction(game, 0, validActions)
                 if humanAction is None:
                     break
                 if verbose:
-                    print(game)
                     print('Agent move: {}\n'.format(move.moveString(humanAction)))
+                    print(game)
                 if mw is not None:
                     mw.write_move(game.board, humanAction)
 

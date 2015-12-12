@@ -10,6 +10,7 @@ ind = 0
 p = Popen(['th', 'gameStateQ.lua'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
 score_record = []
 max_score = 0
+ave_score = 550
 
 
 class Move:
@@ -45,9 +46,6 @@ class GameState2048:
             self.score = 0
         self.moves = Move()
         self.won = False
-        row = random.randrange(4)
-        col = random.randrange(4)
-        self.board[row][col] = 2 if random.random() < 0.9 else 4
 
     def getLegalActions(self, agentIndex=0, validActions=None):
         assert agentIndex == 0 or agentIndex == 1
@@ -165,16 +163,17 @@ def move(gameState):
     global f
     global score_record
     global max_score
+    global ave_score
 
     ### Book keeping of score
     new_score = gameState.score
-    print "score", new_score
+    # print "score", new_score
     if new_score > max_score:
         max_score = new_score
-    score_record.append(new_score)
-    if len(score_record) == 10240:
+    if len(score_record) == 64:
         f = open('qlearning/trainingRecord.csv', 'a')
-        f.write(str((float(sum(score_record))/(len(score_record)))) + "\n")
+        ave_score = float(sum(score_record))/(len(score_record))
+        f.write(str(ave_score) + "\n")
         f.close()
         score_record = []
     new_won = gameState.won
@@ -184,8 +183,9 @@ def move(gameState):
     if (new_score < last_score):
         # print "record", new_score
         # f.write(str(last_score) + "\n")
+        score_record.append(last_score)
         if not new_won:
-            reward = -2000
+            reward = -ave_score
     else:
         if not new_won:
             reward = new_score - last_score
@@ -231,17 +231,18 @@ if __name__ == '__main__':
     validActions = Move().getAllMoves()
     gameState = GameState2048()
     agent = agents.ExpectimaxAgent()
-    lastState = gameState
+    lastState = GameState2048(gameState)
+    lastState.board[0][0] = 1
     while True:
-        time.sleep(1)
+        # time.sleep(1)
         if lastState.board != gameState.board:
             computerAction = getComputerAction(gameState, None)
             if computerAction is None:
                 gameState = GameState2048()
                 continue
             gameState = gameState.generateSuccessor(1, computerAction)
-        print "computer"
-        print(gameState)
+        # print "computer"
+        # print(gameState)
         lastState = gameState
         # print "board", gameState.board
         humanAction = move(gameState)
@@ -249,5 +250,5 @@ if __name__ == '__main__':
         if gameState is None:
             gameState = GameState2048()
             continue
-        print "human"
+        # print('Agent move: {}\n'.format(Move().moveString(humanAction)))
         print(gameState)
