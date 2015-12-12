@@ -9,11 +9,19 @@ To run the front end:
 2) In the main directory, run "python app.py", then go to localhost:5000
 
 gameState.py: provides an abstraction for the 2048 game
+
 agents.py: contains logic behind each of our 6 agents
+
 eval.py: calculates the score of a game board based on different evaluation functions
+
 data.py: uses to generate human readable data files based on a game board
+
 tests.py: unit tests for the 2048 game state
+
 util.py: miscellanous utility functions
+
 app.py: the main entry point for Flask (a Python framework)
+
 templates/index.html: homepage for the 2048 game frontend
+
 statics/*.js: logic for the 2048 game (borrowed from the original 2048 game by Gabriele Cirulli)
