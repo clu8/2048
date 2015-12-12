@@ -35,7 +35,7 @@ def read_data(inputs_path=INPUTS_FILE_PATH, labels_path=LABELS_FILE_PATH):
 
     with open(labels_path, 'r') as csvfile:
         reader = csv.reader(csvfile)
-        labels = [int(row[0]) for row in reader]
+        labels = [tuple(map(int, row)) for row in reader]
 
     return (inputs, labels)
 

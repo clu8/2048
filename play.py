@@ -56,7 +56,7 @@ def simulate(num_games=1, save_to_csv=False, verbose=False):
         return results
 
     move = gameState.Move()
-    agent = agents.ExpectimaxAgent(3)
+    agent = agents.LogisticAgent(False)
     validActions = move.getAllMoves()
 
     if save_to_csv:
@@ -101,5 +101,5 @@ def compare_depth():
         game = game.generateSuccessor(0, depth3Action)
 
 if __name__ == '__main__':
-    print(simulate(1, True, True))
+    print(simulate(10, False, True))
     # compare_depth()
